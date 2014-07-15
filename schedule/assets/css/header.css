@@ -1,0 +1,11 @@
+.nav-menu ul{
+	width: 90%;
+	list-style-type: none;
+}
+
+.nav-menu ul li{
+	display: inline;
+	padding: 10px;
+	float: right;
+
+}
