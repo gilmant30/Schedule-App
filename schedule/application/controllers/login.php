@@ -45,7 +45,7 @@ class Login extends CI_Controller {
 
 	public function logout()
 	{
-		echo 'logout';
+		redirect('login/index');
 	}
 }
 

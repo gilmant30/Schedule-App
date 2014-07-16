@@ -1,0 +1,23 @@
+#top-view-info{
+	width:30%;
+	height:98%;
+	border: 2px solid black;
+	position: relative;
+	float: left;
+}
+
+#top-view-calendar{
+	float: right;
+	border: 2px solid green;
+	position: relative;
+	width: 69.5%;
+	height: 98%;
+}
+
+#top-view-project-name{
+  width:20%;
+  border: 2px solid black;
+}
+
+
+
