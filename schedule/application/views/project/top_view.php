@@ -41,7 +41,7 @@ else
 	echo '</div>';
 
 	echo '<div id="top-view-calendar">';
-		echo 'This is where the calendar could go, click on it and a more detailed one shows up in the box with lots more information';
+		echo '<div class="gantt"></div>';
 	echo '</div>';
 }
 
@@ -49,4 +49,39 @@ else
 
 </div>
 </body>
+
+<script>
+
+	$(function() {
+
+		"use strict";
+
+		$(".gantt").gantt({
+			source: [{
+				name: "Testing",
+				desc: " ",
+				values: [{
+					from: "/Date(1328832000000)",
+					to: "/Date(1333411200000)",
+					label: "Test", 
+					customClass: "ganttRed"
+				}]
+			}],
+			scale: "weeks",
+			minScale: "weeks",
+			maxScale: "months",
+			onItemClick: function(data) {
+				alert("Item clicked - show some details");
+			},
+			onAddClick: function(dt, rowId) {
+				alert("Empty space clicked - add an item!");
+			},
+			onRender: function() {
+				console.log("chart rendered");
+			}
+		});
+
+	});
+
+</script>
 </html>

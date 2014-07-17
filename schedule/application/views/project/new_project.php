@@ -1,6 +1,33 @@
 <script type="text/javascript" src="<?=base_url()?>assets/js/project.js"></script>
 <style>@import url('<?=base_url()?>assets/css/project.css'); </style>
 
+<script>
+  $(function() {
+    $( "#project-start" ).datepicker({
+    	changeMonth: true,
+     	changeYear: true,
+     	showWeek: true,
+     	minDate: 0,
+     	beforeShowDay: function(date){ return [date.getDay() == 1,""]},
+     	onClose: function( selectedDate ) {
+        $( "#project-end" ).datepicker( "option", "minDate", selectedDate );
+      }
+    });
+  });
+
+    $(function() {
+    $( "#project-end" ).datepicker({
+    	changeMonth: true,
+     	changeYear: true,
+     	showWeek: true,
+     	beforeShowDay: function(date){ return [date.getDay() == 5,""]},
+     	 onClose: function( selectedDate ) {
+        $( "#project-end" ).datepicker( "option", "maxDate", selectedDate );
+      }
+    });
+  });
+</script>
+
 <body>
 
 <div class="new-project">
@@ -10,6 +37,7 @@
 	echo form_open('project/index', $attr);
 	echo '<h1>Create a New Project</h1>';
 
+	echo '<div id="input-left">';
 	$data = array(
 		'name' => 'project_name',
 		'id' => 'project-name'
@@ -58,6 +86,9 @@
 	echo form_label('Sequence Number: ', 'sequence_number');
 	echo form_input($data);
 
+	echo '</div>';
+
+	echo '<div id="input-right">';
 	$data = array(
 		'name' => 'project_descriptor',
 		'id' => 'project-descriptor'
@@ -73,11 +104,30 @@
 	echo form_input($data);
 
 	$data = array(
+		'name' => 'project_start',
+		'id' => 'project-start'
+		);
+	echo form_label('Project Start Week (Monday): ', 'project_start');
+	echo form_input($data);
+
+	$data = array(
+		'name' => 'project_end',
+		'id' => 'project-end'
+		);
+	echo form_label('Project End Week (Friday): ', 'project_end');
+	echo form_input($data);
+
+	$data = array(
 		'name' => 'project_info',
-		'id' => 'project-info'
+		'id' => 'project-info',
+		'rows' => '6'
 		);
 	echo form_label('Project Info: ', 'project_info');
 	echo form_textarea($data);
+	echo '<br />';
+	echo '<br />';
+	echo '</div>';
+
 
 	$data = array(
 		'name' => 'new_project_submit',

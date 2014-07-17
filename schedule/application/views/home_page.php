@@ -5,9 +5,17 @@
 	<script type="text/javascript" src="<?=base_url()?>assets/js/project.js"></script>
 	<script type="text/javascript" src="<?=base_url()?>assets/js/phase.js"></script>
 	<script type="text/javascript" src="<?=base_url()?>assets/js/resource.js"></script>
+	<script type="text/javascript" src="<?= base_url();?>assets/js/jquery-latest.js"></script>
 	<script type="text/javascript" src="<?= base_url();?>assets/js/jquery.tablesorter.js"></script>
+	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
+	<script type="text/javascript" src="<?= base_url();?>assets/js/jquery-ui-1.10.4.custom.min.js"></script>
 	<style>@import url('<?=base_url()?>assets/css/project.css'); </style>
+	<style>@import url('<?=base_url()?>assets/css/gantt.css'); </style>
 	<style>@import url('<?=base_url()?>assets/css/top_container.css'); </style>
+	<script type="text/javascript" src="<?=base_url()?>assets/js/jquery.fn.gantt.js"></script>
+	<script type="text/javascript" src="<?=base_url()?>assets/js/moment.min.js"></script>
+	<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://taitems.github.com/UX-Lab/core/css/prettify.css" />
 	<title>Schedule App</title>
 </head>
 <body>
@@ -23,6 +31,7 @@
 	<ul class="project">
 		<li id="create-project">Create Project</li>
 		<li id="show-all-project">Show all</li>
+		<li id="search-project">Search Project</li>
 	</ul>
 	<h1>Phase</h1>
 	<ul class="phase">
@@ -45,7 +54,7 @@
 </div>
 
 <div class="right-container">
-<h1>Welcome to the home page for your new scheduler application click on a link on the right to begin</h1>
+<h1>Welcome to the home page for your new scheduler application click on a link on the left to begin</h1>
 </div>
 
 
