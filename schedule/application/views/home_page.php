@@ -2,20 +2,23 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<script type="text/javascript" src="<?=base_url()?>assets/js/project.js"></script>
-	<script type="text/javascript" src="<?=base_url()?>assets/js/phase.js"></script>
-	<script type="text/javascript" src="<?=base_url()?>assets/js/resource.js"></script>
 	<script type="text/javascript" src="<?= base_url();?>assets/js/jquery-latest.js"></script>
 	<script type="text/javascript" src="<?= base_url();?>assets/js/jquery.tablesorter.js"></script>
 	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
 	<script type="text/javascript" src="<?= base_url();?>assets/js/jquery-ui-1.10.4.custom.min.js"></script>
-	<style>@import url('<?=base_url()?>assets/css/project.css'); </style>
-	<style>@import url('<?=base_url()?>assets/css/gantt.css'); </style>
-	<style>@import url('<?=base_url()?>assets/css/top_container.css'); </style>
 	<script type="text/javascript" src="<?=base_url()?>assets/js/jquery.fn.gantt.js"></script>
-	<script type="text/javascript" src="<?=base_url()?>assets/js/moment.min.js"></script>
+	<script type="text/javascript" src="<?=base_url()?>assets/js/project.js"></script>
+	<script type="text/javascript" src="<?=base_url()?>assets/js/phase.js"></script>
+	<script type="text/javascript" src="<?=base_url()?>assets/js/resource.js"></script>
 	<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="http://taitems.github.com/UX-Lab/core/css/prettify.css" />
+    
+    <style>@import url('<?=base_url()?>assets/css/prettify.css'); </style>
+    <style>@import url('<?=base_url()?>assets/css/project.css'); </style>
+    <style>@import url('<?=base_url()?>assets/css/phase.css'); </style>
+	<style>@import url('<?=base_url()?>assets/css/gantt.css'); </style>
+	
+	<style>@import url('<?=base_url()?>assets/css/top_container.css'); </style>
+	 <link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
 	<title>Schedule App</title>
 </head>
 <body>

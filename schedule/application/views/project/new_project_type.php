@@ -25,8 +25,15 @@
 	echo form_submit($data);
 
 	echo form_close();
-	echo '<div id="new-project-error" style="color:red;"></div>'; 
-	echo '<div id="new-project-success" style="color:green;"></div>'; 
+	echo '<div id="new-project-type-error" style="color:red;"></div>'; 
+	echo '<div id="new-project-type-success" style="color:green;"></div>'; 
+
+
+	echo '<h2>Project Types already existent</h2>';
+	foreach($project_type as $type)
+	{
+		echo '<p>'.$type->TYPE_NAME.'</p>';
+	}
 ?>
 
 </div>

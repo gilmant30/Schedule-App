@@ -26,6 +26,12 @@
 	echo form_close();
 	echo '<div id="new-dept-error" style="color:red;"></div>'; 
 	echo '<div id="new-dept-success" style="color:green;"></div>'; 
+
+	echo '<h2>Departments already existent</h2>';
+	foreach($department as $dept)
+	{
+		echo '<p>'.$dept->DEPT_NAME.'</p>';
+	}
 ?>
 
 </div>

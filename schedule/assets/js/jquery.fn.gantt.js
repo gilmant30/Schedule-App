@@ -40,7 +40,7 @@
             useCookie: false,
             maxScale: "months",
             minScale: "hours",
-            waitText: "Please wait...",
+            waitText: "Loading project...",
             onItemClick: function (data) { return; },
             onAddClick: function (data) { return; },
             onRender: function() { return; },

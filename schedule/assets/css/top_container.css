@@ -1,23 +1,28 @@
 #top-view-info{
 	width:30%;
-	height:98%;
-	border: 2px solid black;
+	height:97%;
 	position: relative;
 	float: left;
+	font-weight: bold;
+	margin-top: 5px;
+	margin-left: 5px;
 }
 
 #top-view-calendar{
-	float: right;
+	float: left;
 	border: 2px solid green;
 	position: relative;
-	width: 69.5%;
+	width: 69.3%;
 	height: 98%;
 }
 
-#top-view-project-name{
-  width:20%;
-  border: 2px solid black;
+#top-view-info #top-view-info-project-id{
+	display: none;
 }
+
+
+
+
 
 
 

@@ -11,11 +11,21 @@ $( document ).ready(function() {
 	});
 
 	function loadAllProjectPage(){
-		$(".right-container").load(base_url + 'phase/newPhase');
+		var project_id = $("#top-view-info-project-id").text();
+		//check whether there is a valid project id available
+		if(project_id)
+		{
+			loadNewPhaseForm(project_id);
+		}
+		else
+		{
+			$(".right-container").load(base_url + 'phase/selectProject');
+		}
+		
 	}
 
-	function loadNewPhaseForm(){
-		$(".right-container").load(base_url + 'phase/newPhase');
+	function loadNewPhaseForm(project_id){
+		$(".right-container").load(base_url + 'phase/newPhase/' + project_id);
 	}
 
 	$("#new-phase-form").submit(function(event){
@@ -24,16 +34,17 @@ $( document ).ready(function() {
 		var form_data = $(this).serialize();
 
 		$.ajax({
-		  	url: base_url + 'project/createPhase',
+		  	url: base_url + 'phase/createPhase',
 		  	type: "POST",
 		  	data: form_data,
 		  	dataType : 'json',
 		  	success:function(data){
 			  	if (data.success == 0) { //If fails
-	                $('#new-project-error').html(data.msg); //Throw relevant error
+	                $('#new-phase-error').html(data.msg); //Throw relevant error
 	            }
 	            else {
-	            	$(".right-container").load(base_url + 'phase/info');        
+	            	$("#new-phase-form")[0].reset();
+	            	$("#new-phase-success").html(data.msg);        
 	            }
 	        }
 		});
@@ -54,6 +65,66 @@ $( document ).ready(function() {
 
 	/***********************************************************/
 
-/****************************************************************************************/
+	/************** New Phase Type ************************/
 
+	$("#add-phase-type").click(function() {
+	   	addPhaseType();
+	});
+
+	function addPhaseType(){
+		$(".right-container").load(base_url + 'phase/newPhaseType');
+	}
+
+	$("#new-phase-type-form").submit(function(event){
+		event.preventDefault();
+
+		var form_data = $(this).serialize();
+
+		$.ajax({
+		  	url: base_url + 'phase/createPhaseType',
+		  	type: "POST",
+		  	data: form_data,
+		  	dataType : 'json',
+		  	success:function(data){
+			  	if (data.success == 0) { //If fails
+	                $('#new-phase-error').html(data.msg); //Throw relevant error
+	            }
+	            else {
+	            	$("#new-phase-success").html(data.msg); //throws success message       
+	            }
+	        }
+		});
+	});
+
+	$(function() {
+	    $( "#sortable" ).sortable({
+    		update: function(event, ui){
+    			var order = $("#sortable").sortable('toArray');
+    			alert(order);
+    			/*
+    			$.ajax({
+				  	url: base_url + 'phase/updateTypeOrder',
+				  	type: "POST",
+				  	data: order,
+				  	dataType : 'json',
+				  	success:function(data){
+					  	if (data.success == 0) { //If fails
+			                $('#new-phase-error').html(data.msg); //Throw relevant error
+			            }
+			            else {
+			            	console.log(data.msg)
+			            	//$("#new-phase-success").html(data.msg); //throws success message       
+			            }
+			        }
+				});
+	    		*/
+    		}
+	    });
+	    $( "#sortable" ).disableSelection();
+	});
+
+	/***********************************************************/
+
+
+/****************************************************************************************/
 });

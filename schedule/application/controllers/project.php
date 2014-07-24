@@ -38,6 +38,8 @@ class Project extends CI_Controller {
 		$this->form_validation->set_rules('project_descriptor', 'Project Descriptor', 'required');
 		$this->form_validation->set_rules('project_code', 'Project Code', 'required');
 		$this->form_validation->set_rules('project_info', 'Project Info', 'required');
+		$this->form_validation->set_rules('project_start', 'Project Start', 'required');
+		$this->form_validation->set_rules('project_end', 'Project End', 'required');
 
 		if($this->form_validation->run() == FALSE)
 		{
@@ -54,8 +56,10 @@ class Project extends CI_Controller {
 			$project_descriptor = $this->security->xss_clean($this->input->post('project_descriptor'));
 			$project_code = $this->security->xss_clean($this->input->post('project_code'));
 			$project_info = $this->security->xss_clean($this->input->post('project_info'));
+			$project_start = $this->security->xss_clean($this->input->post('project_start'));
+			$project_end = $this->security->xss_clean($this->input->post('project_end'));
 
-			$query = $this->Project_model->insert_project($project_name, $project_dept_id, $project_year, $project_type_id, $project_sponsor, $sequence_number, $project_descriptor, $project_code, $project_info);
+			$query = $this->Project_model->insert_project($project_name, $project_dept_id, $project_year, $project_type_id, $project_sponsor, $sequence_number, $project_descriptor, $project_code, $project_info, $project_start, $project_end);
 
 			if($query == 'error')
 			{
@@ -63,30 +67,26 @@ class Project extends CI_Controller {
 			}
 			else if($query == 'added')
 			{
-				echo json_encode(array('success'=>1, 'msg' => 'Project type has been added'));
+				echo json_encode(array('success'=>1, 'msg' => 'Project has been added'));
 			}
 		}
 	}
 
 	public function showAll()
 	{
-		$query = $this->Project_model->get_all_projects();
-
-		if($query == FALSE)
-		{
-			$data['projects'] = FALSE;
-		}
-		else
-		{
-			$data['projects'] = $query;
-		}
+		$data['title'] = 'Show All Projects';
+		$data['projects'] = $this->Project_model->get_all_projects();
+		$data['types'] = $this->Project_model->get_all_project_types();
+		$data['department'] = $this->Project_model->get_all_departments();
 		
 		$this->load->view('project/show_all_projects', $data);
 	}
 
 	public function newProjectType()
 	{
-		$this->load->view('project/new_project_type');
+		$data['project_type'] = $this->Project_model->get_all_project_types();
+		
+		$this->load->view('project/new_project_type', $data);
 	}
 
 	public function createProjectType()
@@ -122,7 +122,9 @@ class Project extends CI_Controller {
 
 	public function newDept()
 	{
-		$this->load->view('project/new_dept');
+		$data['department'] = $this->Project_model->get_all_departments();
+
+		$this->load->view('project/new_dept',$data);
 	}
 
 	public function createDept()
@@ -164,6 +166,40 @@ class Project extends CI_Controller {
 
 		$this->load->view('project/top_view', $data);
 	}
+
+
+	public function showProjectInfo($project_id)
+	{
+		$data['json_array'] = new ArrayObject();
+		$data['project'] = $this->Project_model->get_project_by_id($project_id);
+		$phase_types = $this->Project_model->get_all_phase_types();
+		$dept = $this->Project_model->get_all_departments();
+		$phases = $this->Project_model->get_project_phases($project_id);
+
+		foreach($phases as $phase)
+		{
+			foreach ($phase_types as $type) {
+				if($phase->PHASE_TYPE_ID == $type->PHASE_TYPE_ID)
+				{
+					$phase_name = $type->TYPE_NAME;
+				}
+			}
+
+			$phase_array = array(
+				'phase_id' => $phase->PROJECT_PHASE_ID,
+				'phase_type' => $phase_name,
+				'phase_start' => $phase->PHASE_START,
+				'phase_end' => $phase->PHASE_END
+				);
+
+			$data['json_array']->append($phase_array);
+		}
+
+		$data['json_array'] = json_encode($data['json_array']);
+
+		$this->load->view('project/project_info', $data);
+	}
+
 }
 
 /* End of file welcome.php */

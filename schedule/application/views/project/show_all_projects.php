@@ -9,7 +9,7 @@ $(document).ready(function()
 
 <body>
 <div class="all-projects">
-	<h1>Show all Projects</h1>
+	<h1><?=$title;?></h1>
 	<table id="myTable" class="tablesorter">
 		<thead>
 			<tr>
@@ -32,8 +32,17 @@ $(document).ready(function()
 						echo '<td class="clickable" id="'.$proj->PROJECT_ID.'" style="cursor:pointer;">'.$proj->PROJECT_CODE.'</td>';
 						echo '<td>'.$proj->PROJECT_NAME.'</td>';
 						echo '<td>'.$proj->PROJECT_YEAR.'</td>';
-						echo '<td>'.$proj->PROJECT_DEPT_ID.'</td>';
-						echo '<td>'.$proj->PROJECT_TYPE_ID.'</td>';
+						foreach($department as $dept)
+						{
+							if($dept->PROJECT_DEPT_ID == $proj->PROJECT_DEPT_ID)
+								echo '<td>'.$dept->DEPT_NAME.'</td>';
+						}
+
+						foreach($types as $type)
+						{
+							if($type->PROJECT_TYPE_ID == $proj->PROJECT_TYPE_ID)
+								echo '<td>'.$type->TYPE_NAME.'</td>';
+						}
 						echo '<td>'.$proj->PROJECT_SPONSOR.'</td>';
 						echo '<td>'.$proj->PROJECT_DESCRIPTOR.'</td>';
 					echo '</tr>';

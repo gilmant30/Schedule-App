@@ -14,6 +14,8 @@ else
 {
 	echo '<div id="top-view-info">';
 		
+	echo '<div id="top-view-info-project-id">'.$project->PROJECT_ID.'</div>';
+
 		echo '<div id="top-view-project-name">';
 		echo 'Title: '.$project->PROJECT_NAME;
 		echo '</div>';
@@ -34,6 +36,14 @@ else
 		}
 		echo '</div>';
 
+		echo '<div id="top-view-project-start">';
+		echo 'Project Start: '.$project->PROJECT_START;
+		echo '</div>';
+
+		echo '<div id="top-view-project-end">';
+		echo 'Project End: '.$project->PROJECT_END;
+		echo '</div>';
+	
 		echo '<div id="top-view-project-detail">';
 		echo 'Info: '.$project->PROJECT_INFO;
 		echo '</div>';
@@ -52,34 +62,37 @@ else
 
 <script>
 
-	$(function() {
+	$(function() {	
 
-		"use strict";
+			var start_date = new Date("<?php echo $project->PROJECT_START; ?>").getTime(); 
+			var end_date = new Date("<?php echo $project->PROJECT_END; ?>").getTime(); 
 
-		$(".gantt").gantt({
-			source: [{
-				name: "Testing",
-				desc: " ",
-				values: [{
-					from: "/Date(1328832000000)",
-					to: "/Date(1333411200000)",
-					label: "Test", 
-					customClass: "ganttRed"
-				}]
-			}],
-			scale: "weeks",
-			minScale: "weeks",
-			maxScale: "months",
-			onItemClick: function(data) {
-				alert("Item clicked - show some details");
-			},
-			onAddClick: function(dt, rowId) {
-				alert("Empty space clicked - add an item!");
-			},
-			onRender: function() {
-				console.log("chart rendered");
-			}
-		});
+			var start = "/Date(" + start_date.valueOf() + ")/";
+			var end = "/Date("+ end_date.valueOf() +")/";
+
+
+			$(".gantt").gantt({
+				source: [{
+						name: "<?php echo $project->PROJECT_CODE; ?>",
+						desc: "<?php echo $project->PROJECT_DESCRIPTOR; ?>",
+						values: [
+							{
+								from: start,
+								to: end,
+								label: "Whole Project Length", 
+								customClass: "ganttOrange",
+								dataObj: {project_id:"<?= $project->PROJECT_ID; ?>"}
+							}
+						]
+					}],
+				scale: "weeks",
+				minScale: "weeks",
+				scrollToToday: false,
+				navigate: "scroll",
+				onItemClick: function(data) {
+					$(".right-container").load('<?=base_url()?>project/showProjectInfo/<?=$project->PROJECT_ID?>');
+				},
+			});
 
 	});
 

@@ -123,10 +123,10 @@ $( document ).ready(function() {
 		  	dataType : 'json',
 		  	success:function(data){
 			  	if (data.success == 0) { //If fails
-	                $('#new-project-error').html(data.msg); //Throw relevant error
+	                $('#new-project-type-error').html(data.msg); //Throw relevant error
 	            }
 	            else {
-	            	$("#new-project-success").html(data.msg); //throws success message       
+	            	$("#new-project-type-success").html(data.msg); //throws success message       
 	            }
 	        }
 		});

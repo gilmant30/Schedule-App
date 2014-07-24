@@ -1,4 +1,4 @@
-.gantt, .gantt2 {
+.gantt1, .gantt12 {
     width: 100%;
     height: 100%;
     margin: 3px auto;
@@ -12,7 +12,7 @@
             box-sizing: border-box;
 }
 
-.gantt:after {
+.gantt1:after {
     content: ".";
     visibility: hidden;
     display: block;
@@ -68,7 +68,7 @@
 }
 .fn-gantt .leftPanel .name, .fn-gantt .leftPanel .desc {
     float: left;
-    height: 23px;
+    height: 25%;
     margin: 0;
     border-bottom: 1px solid #DDD;
     background-color: #f6f6f6;
@@ -182,7 +182,7 @@
 
 .fn-gantt .bar {
     background-color: #D0E4FD;
-    height: 23px;
+    height: 35%;
     margin: 0px 3px 3px 0px;
     position: absolute;
     z-index: 10;
@@ -212,24 +212,24 @@
     font-size: 11px;
 }
 
-.fn-gantt .ganttRed {
+.fn-gantt .gantt1Red {
     background-color: #F9C4E1;
 }
-.fn-gantt .ganttRed .fn-label {
+.fn-gantt .gantt1Red .fn-label {
     color: #78436D !important;
 }
 
-.fn-gantt .ganttGreen {
+.fn-gantt .gantt1Green {
     background-color: #D8EDA3;
 }
-.fn-gantt .ganttGreen .fn-label {
+.fn-gantt .gantt1Green .fn-label {
     color: #778461 !important;
 }
 
-.fn-gantt .ganttOrange {
+.fn-gantt .gantt1Orange {
     background-color: #FCD29A;
 }
-.fn-gantt .ganttOrange .fn-label {
+.fn-gantt .gantt1Orange .fn-label {
     color: #714715 !important;
 }
 
@@ -240,7 +240,7 @@
     clear: both;
     background-color: #f6f6f6;
     width: 100%;
-    height: 100%;
+    height: 20%;
 }
 .fn-gantt .navigate {
     border-top: 1px solid #DDD;
