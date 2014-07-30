@@ -1,4 +1,5 @@
-<script type="text/javascript" src="<?=base_url()?>assets/js/project.js"></script>
+<script type="text/javascript" src="<?=base_url()?>assets/js/new_project.js"></script>
+<style>@import url('<?=base_url()?>assets/css/new_project.css'); </style>
 
 <body>
 

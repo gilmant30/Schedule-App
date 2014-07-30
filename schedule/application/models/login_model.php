@@ -11,7 +11,7 @@ class Login_model extends CI_Model {
 
 	function validate_login($email,$password)
 	{
-		$query = $this->db->query("SELECT * FROM user_table WHERE email = '$email' AND user_password = '$password'");
+		$query = $this->db->query("SELECT * FROM wsw_user WHERE email = '$email' AND user_password = '$password'");
 
 		if($query->num_rows() == 1)
 		{

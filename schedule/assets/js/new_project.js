@@ -2,16 +2,15 @@ var base_url = 'http://localhost/schedule/';
 
 $( document ).ready(function() {
 
-/********************************** PROJECTS **********************************************/
+/************** New Project ************************/
 
-	/************** New Project ************************/
-
-	$("#create-project").click(function() {
+	$("#create-project").click(function(event) {
+		event.preventDefault();
 	   	loadNewProjectForm();
 	});
 
 	function loadNewProjectForm(){
-		$(".right-container").load(base_url + 'project/newProject');
+		$(".left-container").load(base_url + 'project/newProject');
 	}
 
 	$("#new-project-form").submit(function(event){
@@ -37,10 +36,9 @@ $( document ).ready(function() {
 	});
 
 
-	/*************************************************/
+/*************************************************/
 
-
-	/****************** New Project Form *************/
+/****************** New Project Form *************/
 
 	var year = $("#project-year").val();
 	var type = $("#project-type option:selected").text();
@@ -76,17 +74,17 @@ $( document ).ready(function() {
 	});
 
 
-	/*************************************************/
+/*************************************************/
 
+/************** Show All Projects ************************/
 
-	/************** Show All Projects ************************/
-
-	$("#show-all-project").click(function() {
+	$("#show-all-project-table").click(function(event) {
+		event.preventDefault();
 	   	showAllProjects();
 	});
 
 	function showAllProjects(){
-		$(".right-container").load(base_url + 'project/showAll');
+		$(".left-container").load(base_url + 'project/showAll');
 	}
 
 	$(".clickable").click(function() {
@@ -100,15 +98,15 @@ $( document ).ready(function() {
 
 	/***********************************************************/
 
-
 	/************** Add Project Type ************************/
 
-	$("#add-project-type").click(function() {
+	$("#add-project-type").click(function(event) {
+	   	event.preventDefault();
 	   	addProjectType();
 	});
 
 	function addProjectType(){
-		$(".right-container").load(base_url + 'project/newProjectType');
+		$(".left-container").load(base_url + 'project/newProjectType');
 	}
 
 	$("#new-project-type-form").submit(function(event){
@@ -134,15 +132,15 @@ $( document ).ready(function() {
 
 	/***********************************************************/
 
-
 	/************** Add Project Dept ************************/
 
-	$("#add-dept").click(function() {
+	$("#add-dept").click(function(event) {
+	   	event.preventDefault();
 	   	addDept();
 	});
 
 	function addDept(){
-		$(".right-container").load(base_url + 'project/newDept');
+		$(".left-container").load(base_url + 'project/newDept');
 	}
 
 	$("#new-dept-form").submit(function(event){
@@ -168,8 +166,4 @@ $( document ).ready(function() {
 
 	/***********************************************************/
 
-
-/****************************************************************************************/
-
 });
-

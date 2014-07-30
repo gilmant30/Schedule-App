@@ -127,6 +127,15 @@ class Phase extends CI_Controller {
 		echo json_encode(array('success'=>1, 'msg' => $order));
 	}
 
+	public function showPhaseInfo($phase_id)
+	{
+		$data['phase'] = $this->Phase_model->get_phase_by_id($phase_id);
+		$data['phase_types'] = $this->Phase_model->get_all_phase_types();
+
+
+		$this->load->view('phase/phase_info', $data);
+	}
+
 }
 
 ?>

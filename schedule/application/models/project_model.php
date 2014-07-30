@@ -11,7 +11,7 @@ class Project_model extends CI_Model {
 
 	function get_all_projects()
 	{
-		$query = $this->db->query("SELECT * FROM project_table");
+		$query = $this->db->query("SELECT * FROM sch_project");
 
 		if($query->num_rows() > 0)
 		{
@@ -23,26 +23,33 @@ class Project_model extends CI_Model {
 
 	function get_all_project_types()
 	{
-		$query = $this->db->query("SELECT * FROM project_type");
+		$query = $this->db->query("SELECT * FROM sch_project_type");
 
 		return $query->result();
 	}
 
 	function get_all_phase_types()
 	{
-		$query = $this->db->query("SELECT * FROM phase_type");
+		$query = $this->db->query("SELECT * FROM sch_phase_type");
 
 		return $query->result();
 	}
 
 	function get_all_departments()
 	{
-		$query = $this->db->query("SELECT * FROM project_dept");
+		$query = $this->db->query("SELECT * FROM sch_project_dept");
 
 		return $query->result();
 	}
 
-	function insert_project($project_name, $project_dept_id, $project_year, $project_type_id, $project_sponsor, $sequence_number, $project_descriptor, $project_code, $project_info, $project_start, $project_end)
+	function get_all_project_codes()
+	{
+		$query = $this->db->query("SELECT PROJECT_CODE FROM sch_project");
+
+		return $query->result();
+	}
+
+	function insert_project($project_name, $project_dept_id, $project_year, $project_type_id, $project_sponsor, $sequence_number, $project_descriptor, $project_code, $project_info, $project_duration)
 	{
 		$this->db->set('PROJECT_TYPE_ID', $project_type_id);
 		$this->db->set('PROJECT_DEPT_ID', $project_dept_id);
@@ -52,10 +59,9 @@ class Project_model extends CI_Model {
 		$this->db->set('PROJECT_CODE', $project_code);
 		$this->db->set('PROJECT_SPONSOR', $project_sponsor);
 		$this->db->set('PROJECT_INFO', $project_info);
-		$this->db->set('PROJECT_START', $project_start);
-		$this->db->set('PROJECT_END', $project_end);
+		$this->db->set('PROJECT_DURATION', $project_duration);
 
-		if($this->db->insert('PROJECT_TABLE') != TRUE)
+		if($this->db->insert('SCH_PROJECT') != TRUE)
 		{
 			return 'error';
 		}
@@ -67,7 +73,7 @@ class Project_model extends CI_Model {
 
 	function check_if_project_type_exists($project_type)
 	{
-		$query = $this->db->query("SELECT * FROM project_type WHERE type_name = '$project_type'");
+		$query = $this->db->query("SELECT * FROM sch_project_type WHERE type_name = '$project_type'");
 
 		return $query->num_rows();
 	}
@@ -84,7 +90,7 @@ class Project_model extends CI_Model {
 		{
 			$this->db->set('TYPE_NAME', $project_type);
 			
-			if($this->db->insert('PROJECT_TYPE') != TRUE)
+			if($this->db->insert('SCH_PROJECT_TYPE') != TRUE)
 			{
 				return 'error';
 			}
@@ -100,7 +106,7 @@ class Project_model extends CI_Model {
 
 	function check_if_dept_exists($dept_name)
 	{
-		$query = $this->db->query("SELECT * FROM project_dept WHERE dept_name = '$dept_name'");
+		$query = $this->db->query("SELECT * FROM sch_project_dept WHERE dept_name = '$dept_name'");
 
 		return $query->num_rows();		
 	}
@@ -117,7 +123,7 @@ class Project_model extends CI_Model {
 		{
 			$this->db->set('DEPT_NAME', $dept_name);
 			
-			if($this->db->insert('PROJECT_DEPT') != TRUE)
+			if($this->db->insert('SCH_PROJECT_DEPT') != TRUE)
 			{
 				return 'error';
 			}
@@ -131,7 +137,7 @@ class Project_model extends CI_Model {
 
 	function get_project_by_id($project_id)
 	{
-		$query = $this->db->query("SELECT * FROM project_table WHERE project_id = '$project_id'");
+		$query = $this->db->query("SELECT * FROM sch_project WHERE project_id = '$project_id'");
 
 		if($query->num_rows == 0)
 		{
@@ -145,7 +151,7 @@ class Project_model extends CI_Model {
 
 	function get_project_phases($project_id)
 	{
-		$query = $this->db->query("SELECT * FROM project_phase WHERE project_id = '$project_id'");
+		$query = $this->db->query("SELECT * FROM sch_project_phase WHERE project_id = '$project_id'");
 
 		if($query->num_rows == 0)
 		{

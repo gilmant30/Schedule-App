@@ -48,29 +48,23 @@
 		echo '<tr>';
 			echo '<th>Add?</th>';
 			echo '<th>Type</th>';
-			echo '<th>Start date</th>';
-			echo '<th>End date</th>';
+			echo '<th>Phase Duration (total hours for developers)</th>';
 		echo '</tr>';
 	echo '</thead>';
 	echo '<tbody>';
 
 	foreach($phase_types as $type)
 	{
-		$start = array(
-		'name' => 'phase_start_'.$type->PHASE_TYPE_ID,
-		'class' => 'phase-start'
+		$input = array(
+		'name' => 'phase_duration',
+		'class' => 'phase-duration'
 		);
 
-		$end = array(
-		'name' => 'phase_end_'.$type->PHASE_TYPE_ID,
-		'class' => 'phase-end'
-		);
 
 		echo '<tr>';
 		echo '<td>'.form_checkbox('insert_phase[]', $type->PHASE_TYPE_ID, FALSE).'</td>';
 		echo '<td>'.$type->TYPE_NAME.'</td>';
-		echo '<td>'.form_input($start).'</td>';
-		echo '<td>'.form_input($end).'</td>';
+		echo '<td>'.form_input($input).'</td>';
 
 		echo '</tr>';
 	}

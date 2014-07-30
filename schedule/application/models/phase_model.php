@@ -10,7 +10,7 @@ class Phase_model extends CI_Model {
 
 	function check_if_phase_type_exists($phase_type)
 	{
-		$query = $this->db->query("SELECT * FROM phase_type WHERE type_name = '$phase_type'");
+		$query = $this->db->query("SELECT * FROM sch_phase_type WHERE type_name = '$phase_type'");
 
 		return $query->num_rows();
 	}
@@ -27,7 +27,7 @@ class Phase_model extends CI_Model {
 		{
 			$this->db->set('TYPE_NAME', $phase_type);
 			
-			if($this->db->insert('PHASE_TYPE') != TRUE)
+			if($this->db->insert('SCH_PHASE_TYPE') != TRUE)
 			{
 				return 'error';
 			}
@@ -41,7 +41,7 @@ class Phase_model extends CI_Model {
 
 	function get_all_phase_types()
 	{
-		$query = $this->db->query("SELECT * FROM phase_type");
+		$query = $this->db->query("SELECT * FROM sch_phase_type");
 
 		return $query->result();
 	}
@@ -54,7 +54,7 @@ class Phase_model extends CI_Model {
 		$this->db->set('PHASE_END', $end);
 		$this->db->set('STATUS', 'start');
 
-		if($this->db->insert('PROJECT_PHASE') != TRUE)
+		if($this->db->insert('SCH_PROJECT_PHASE') != TRUE)
 		{
 			return 'error';
 		}
@@ -62,5 +62,12 @@ class Phase_model extends CI_Model {
 		{
 			return 'added';
 		}
+	}
+
+	function get_phase_by_id($phase_id)
+	{
+		$query = $this->db->query("SELECT * FROM sch_project_phase WHERE project_phase_id = '$phase_id'");
+
+		return $query->row();
 	}
 }

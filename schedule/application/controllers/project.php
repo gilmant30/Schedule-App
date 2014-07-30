@@ -14,7 +14,10 @@ class Project extends CI_Controller {
 
 	public function index()
 	{
-		$this->load->view('template/header');
+		$data['project_codes'] = json_encode($this->Project_model->get_all_project_codes());
+
+
+		$this->load->view('template/header',$data);
 		$this->load->view('home_page');
 	}
 
@@ -38,8 +41,7 @@ class Project extends CI_Controller {
 		$this->form_validation->set_rules('project_descriptor', 'Project Descriptor', 'required');
 		$this->form_validation->set_rules('project_code', 'Project Code', 'required');
 		$this->form_validation->set_rules('project_info', 'Project Info', 'required');
-		$this->form_validation->set_rules('project_start', 'Project Start', 'required');
-		$this->form_validation->set_rules('project_end', 'Project End', 'required');
+		$this->form_validation->set_rules('project_duration', 'Project Duration', 'required');
 
 		if($this->form_validation->run() == FALSE)
 		{
@@ -56,10 +58,9 @@ class Project extends CI_Controller {
 			$project_descriptor = $this->security->xss_clean($this->input->post('project_descriptor'));
 			$project_code = $this->security->xss_clean($this->input->post('project_code'));
 			$project_info = $this->security->xss_clean($this->input->post('project_info'));
-			$project_start = $this->security->xss_clean($this->input->post('project_start'));
-			$project_end = $this->security->xss_clean($this->input->post('project_end'));
+			$project_duration = $this->security->xss_clean($this->input->post('project_duration'));
 
-			$query = $this->Project_model->insert_project($project_name, $project_dept_id, $project_year, $project_type_id, $project_sponsor, $sequence_number, $project_descriptor, $project_code, $project_info, $project_start, $project_end);
+			$query = $this->Project_model->insert_project($project_name, $project_dept_id, $project_year, $project_type_id, $project_sponsor, $sequence_number, $project_descriptor, $project_code, $project_info, $project_duration);
 
 			if($query == 'error')
 			{
@@ -200,7 +201,9 @@ class Project extends CI_Controller {
 		$this->load->view('project/project_info', $data);
 	}
 
-}
+	public function progressBar()
+	{
+		
+	}
 
-/* End of file welcome.php */
-/* Location: ./application/controllers/welcome.php */
+}
