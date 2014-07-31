@@ -1,5 +1,6 @@
-<script type="text/javascript" src="<?=base_url()?>assets/js/phase.js"></script>
-<style>@import url('<?=base_url()?>assets/css/phase.css'); </style>
+<script type="text/javascript" src="<?=base_url()?>assets/js/new_phase.js"></script>
+
+<style>@import url('<?=base_url()?>assets/css/progress_tracker.css'); </style>
 
 <script>
 
@@ -35,6 +36,16 @@
 
 <div class="new-phase">
 
+<div class="tracker">
+<ol class="progtrckr" data-progtrckr-steps="5">
+    <li class="progtrckr-done">Create Project</li><!--
+ --><li class="progtrckr-todo">Create Phases</li><!--
+ --><li class="progtrckr-todo">Allocate Resources</li><!--
+ --><li class="progtrckr-todo">Select Dates</li><!--
+ --><li class="progtrckr-todo">Finished!</li>
+</ol>
+</div>
+
 <?php
 	$attr = 'id="new-phase-form"';
 	echo form_open('phase/index', $attr);
@@ -48,23 +59,27 @@
 		echo '<tr>';
 			echo '<th>Add?</th>';
 			echo '<th>Type</th>';
-			echo '<th>Phase Duration (total hours for developers)</th>';
+			foreach ($resource_types as $type) {
+				echo '<th>'.$type->TYPE_NAME.' duration (hrs)</th>';
+			}
 		echo '</tr>';
 	echo '</thead>';
 	echo '<tbody>';
 
-	foreach($phase_types as $type)
+	foreach($phase_types as $phase_type)
 	{
-		$input = array(
-		'name' => 'phase_duration',
-		'class' => 'phase-duration'
-		);
-
-
 		echo '<tr>';
-		echo '<td>'.form_checkbox('insert_phase[]', $type->PHASE_TYPE_ID, FALSE).'</td>';
-		echo '<td>'.$type->TYPE_NAME.'</td>';
-		echo '<td>'.form_input($input).'</td>';
+		echo '<td>'.form_checkbox('insert_phase[]', $phase_type->PHASE_TYPE_ID, FALSE).'</td>';
+		echo '<td>'.$phase_type->TYPE_NAME.'</td>';
+
+		foreach ($resource_types as $type) {
+			$input = array(
+			'name' => 'phase_duration_'.$phase_type->PHASE_TYPE_ID.'_'.$type->RESOURCE_TYPE_ID,
+			'class' => 'phase-duration'
+			);
+			
+			echo '<td>'.form_input($input).'</td>';
+		}
 
 		echo '</tr>';
 	}

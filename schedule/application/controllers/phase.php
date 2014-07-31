@@ -10,6 +10,7 @@ class Phase extends CI_Controller {
         $this->load->library(array('form_validation', 'security', 'session')); //set form_validation rules and xss_cleaning
         $this->load->model('Phase_model');
         $this->load->model('Project_model');
+        $this->load->model('Resource_model');
         
 	}
 
@@ -21,12 +22,13 @@ class Phase extends CI_Controller {
 	public function newPhase($project_id)
 	{
 		$data['phase_types'] = $this->Phase_model->get_all_phase_types();
+		$data['resource_types'] = $this->Resource_model->get_all_resource_types();
 		$data['project'] = $this->Project_model->get_project_by_id($project_id);
 
 		$this->load->view('phase/new_phase', $data);
 	}
 
-	public function createPhase()
+	public function createPhase($project_id)
 	{
 		$phase_types = $this->Phase_model->get_all_phase_types();
 

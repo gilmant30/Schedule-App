@@ -28,8 +28,7 @@ $( document ).ready(function() {
 	                $('#new-project-error').html(data.msg); //Throw relevant error
 	            }
 	            else {
-	            	$('#new-project-error').empty();
-	            	$('#new-project-success').html(data.msg); //Throw success message      
+	            	$(".left-container").load(base_url + 'phase/newPhase/'+data.project_id);      
 	            }
 	        }
 		});

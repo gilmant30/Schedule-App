@@ -49,7 +49,7 @@ class Project_model extends CI_Model {
 		return $query->result();
 	}
 
-	function insert_project($project_name, $project_dept_id, $project_year, $project_type_id, $project_sponsor, $sequence_number, $project_descriptor, $project_code, $project_info, $project_duration)
+	function insert_project($project_name, $project_dept_id, $project_year, $project_type_id, $project_sponsor, $sequence_number, $project_descriptor, $project_code, $project_info)
 	{
 		$this->db->set('PROJECT_TYPE_ID', $project_type_id);
 		$this->db->set('PROJECT_DEPT_ID', $project_dept_id);
@@ -59,9 +59,24 @@ class Project_model extends CI_Model {
 		$this->db->set('PROJECT_CODE', $project_code);
 		$this->db->set('PROJECT_SPONSOR', $project_sponsor);
 		$this->db->set('PROJECT_INFO', $project_info);
-		$this->db->set('PROJECT_DURATION', $project_duration);
 
 		if($this->db->insert('SCH_PROJECT') != TRUE)
+		{
+			return 'error';
+		}
+		else
+		{
+			return 'added';
+		}
+	}
+
+	function insert_project_duration($project_id, $resource_type_id, $duration)
+	{
+		$this->db->set('PROJECT_ID', $project_id);
+		$this->db->set('RESOURCE_TYPE_ID', $resource_type_id);
+		$this->db->set('PROJ_DURATION', $duration);
+
+		if($this->db->insert('SCH_PROJECT_DURATION') != TRUE)
 		{
 			return 'error';
 		}
@@ -160,6 +175,21 @@ class Project_model extends CI_Model {
 		else
 		{
 			return $query->result();
+		}
+	}
+
+	function get_project_id($project_code)
+	{
+		$query = $this->db->query("SELECT project_id FROM sch_project WHERE project_code = '$project_code'");
+
+		if($query->num_rows() == 1)
+		{
+			$query = $query->row();
+			return $query->PROJECT_ID;
+		}
+		else
+		{
+			return 'error';
 		}
 	}
 

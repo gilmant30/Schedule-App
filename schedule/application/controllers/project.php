@@ -9,6 +9,7 @@ class Project extends CI_Controller {
 		$this->load->helper(array('form', 'url', 'string', 'cookie'));  //load a form and the base_url
         $this->load->library(array('form_validation', 'security', 'session')); //set form_validation rules and xss_cleaning
         $this->load->model('Project_model');
+        $this->load->model('Resource_model');
         
 	}
 
@@ -25,13 +26,14 @@ class Project extends CI_Controller {
 	{
 		$data['project_type'] = $this->Project_model->get_all_project_types();
 		$data['department'] = $this->Project_model->get_all_departments();
+		$data['resource_type'] = $this->Resource_model->get_all_resource_types();
 
 		$this->load->view('project/new_project',  $data);
 	}
 
 	public function createProject()
 	{		
-
+		//validate to make sure all fields are filled in correctly
 		$this->form_validation->set_rules('project_name', 'Project Name', 'required');
 		$this->form_validation->set_rules('project_dept_id', 'Project Department', 'required');
 		$this->form_validation->set_rules('project_year', 'Project Year', 'required|numeric|exact_length[4]');
@@ -41,7 +43,14 @@ class Project extends CI_Controller {
 		$this->form_validation->set_rules('project_descriptor', 'Project Descriptor', 'required');
 		$this->form_validation->set_rules('project_code', 'Project Code', 'required');
 		$this->form_validation->set_rules('project_info', 'Project Info', 'required');
-		$this->form_validation->set_rules('project_duration', 'Project Duration', 'required');
+
+		$resource_type = $this->Resource_model->get_all_resource_types();
+
+		foreach($resource_type as $type)
+		{
+			$this->form_validation->set_rules('duration_'.$type->RESOURCE_TYPE_ID, $type->TYPE_NAME.' Project Duration', 'required|numeric');
+		}
+
 
 		if($this->form_validation->run() == FALSE)
 		{
@@ -49,6 +58,8 @@ class Project extends CI_Controller {
 		}
 		else
 		{
+			$flag =0;
+
 			$project_name = $this->security->xss_clean($this->input->post('project_name'));
 			$project_dept_id = $this->security->xss_clean($this->input->post('project_dept_id'));
 			$project_year = $this->security->xss_clean($this->input->post('project_year'));
@@ -58,9 +69,8 @@ class Project extends CI_Controller {
 			$project_descriptor = $this->security->xss_clean($this->input->post('project_descriptor'));
 			$project_code = $this->security->xss_clean($this->input->post('project_code'));
 			$project_info = $this->security->xss_clean($this->input->post('project_info'));
-			$project_duration = $this->security->xss_clean($this->input->post('project_duration'));
 
-			$query = $this->Project_model->insert_project($project_name, $project_dept_id, $project_year, $project_type_id, $project_sponsor, $sequence_number, $project_descriptor, $project_code, $project_info, $project_duration);
+			$query = $this->Project_model->insert_project($project_name, $project_dept_id, $project_year, $project_type_id, $project_sponsor, $sequence_number, $project_descriptor, $project_code, $project_info);
 
 			if($query == 'error')
 			{
@@ -68,7 +78,30 @@ class Project extends CI_Controller {
 			}
 			else if($query == 'added')
 			{
-				echo json_encode(array('success'=>1, 'msg' => 'Project has been added'));
+				$project_id = $this->Project_model->get_project_id($project_code);
+				if($project_id == 'error')
+				{
+					echo json_encode(array('success'=>0, 'msg' => 'Error with retrieving project id from the database'));
+				}
+				else
+				{
+					foreach($resource_type as $type)
+					{
+						$duration = $this->security->xss_clean($this->input->post('duration_'.$type->RESOURCE_TYPE_ID));
+
+						$query = $this->Project_model->insert_project_duration($project_id, $type->RESOURCE_TYPE_ID, $duration);
+
+						if($query == 'error')
+						{
+							$flag = 1;
+							echo json_encode(array('success'=>0, 'msg' => 'Error with adding project duration to the database'));
+						}
+					}
+					if($flag == 0)
+					{
+						echo json_encode(array('success'=>1, 'msg' => 'Project has been added', 'project_id' => $project_id));
+					}
+				}
 			}
 		}
 	}

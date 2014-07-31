@@ -52,7 +52,7 @@ console.log(arr);
 		    <li>
 		      <a href="#">Phases</a>
 		      <ul class="fallback">
-		        <li><a href="#">Create Phase</a></li>
+		        <li><a href="#">Edit Phase</a></li>
 		        <li><a href="#" id="add-phase-type">Create Phase Type</a></li>
 		      </ul>
 		    </li>
@@ -66,7 +66,14 @@ console.log(arr);
 		    		<li><a href="#">Resource Numbers</a></li>
 		    	</ul>
 		    </li>
-		    <li><a href="#">Logout</a></li>
+		     <li>
+		      <a href="#">Testing Only</a>
+		      <ul class="fallback">
+		        <li><a href="#" id="create-phase">Create Phase</a></li>
+		        <li><a href="#">Allocate Resource</a></li>
+		      </ul>
+		    </li>
+		    <li><a href="<?=base_url()?>">Logout</a></li>
 		</ul>
 	</nav>
 

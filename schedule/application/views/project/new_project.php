@@ -1,9 +1,20 @@
 <script type="text/javascript" src="<?=base_url()?>assets/js/new_project.js"></script>
 <style>@import url('<?=base_url()?>assets/css/new_project.css'); </style>
+<style>@import url('<?=base_url()?>assets/css/progress_tracker.css'); </style>
 
 <body>
 
 <div class="new-project">
+
+<div class="tracker">
+<ol class="progtrckr" data-progtrckr-steps="5">
+    <li class="progtrckr-todo">Create Project</li><!--
+ --><li class="progtrckr-todo">Create Phases</li><!--
+ --><li class="progtrckr-todo">Allocate Resources</li><!--
+ --><li class="progtrckr-todo">Select Dates</li><!--
+ --><li class="progtrckr-todo">Finished!</li>
+</ol>
+</div>
 
 <?php
 	$attr = 'id="new-project-form"';
@@ -84,14 +95,18 @@
 
 	echo '<br />';
 
-	$data = array(
-		'name' => 'project_duration',
-		'id' => 'project-duration'
+	foreach ($resource_type as $type) {
+		$data = array(
+		'name' => 'duration_'.$type->RESOURCE_TYPE_ID,
+		'class' => 'project-duration',
+		'value' => 0
 		);
-	echo form_label('Project Duration (total hours for developers): ', 'project_duration');
+	echo form_label($type->TYPE_NAME.' project duration (hrs): ', 'duration_'.$type->RESOURCE_TYPE_ID);
 	echo form_input($data);
 
 	echo '<br />';
+	}
+
 
 	$data = array(
 		'name' => 'project_info',

@@ -6,10 +6,12 @@ $( document ).ready(function() {
 
 	/************** New Phase ************************/
 
-	$("#create-phase").click(function() {
-	   	loadAllProjectPage();
+	$("#create-phase").click(function(event) {
+		event.preventDefault();
+	   	loadNewPhaseForm();
 	});
 
+	/*
 	function loadAllProjectPage(){
 		var project_id = $("#top-view-info-project-id").text();
 		//check whether there is a valid project id available
@@ -20,12 +22,12 @@ $( document ).ready(function() {
 		else
 		{
 			$(".right-container").load(base_url + 'phase/selectProject');
-		}
-		
+		}	
 	}
+	*/
 
-	function loadNewPhaseForm(project_id){
-		$(".right-container").load(base_url + 'phase/newPhase/' + project_id);
+	function loadNewPhaseForm(){
+		$(".left-container").load(base_url + 'phase/newPhase/1');
 	}
 
 	$("#new-phase-form").submit(function(event){

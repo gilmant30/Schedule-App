@@ -42,7 +42,7 @@ $(function() {
   		<ul>
   			<li>By day</li>
   			<li>By month</li>
-  			<li>By year</li>
+  			<li><strong>By year</strong></li>
   		</ul>
   	</div>
   	<div class="dev">
