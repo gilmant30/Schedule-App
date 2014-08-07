@@ -7,6 +7,7 @@
 <style>@import url('<?=base_url()?>assets/css/header.css'); </style>
 <style>@import url('<?=base_url()?>assets/css/new_project.css'); </style>
 
+
 <script type="text/javascript">
 
 var projects = <?=$project_codes?>;
@@ -16,8 +17,6 @@ var arr = [];
 projects.forEach(function(entry){
 	arr.push(entry.PROJECT_CODE);
 });
-
-console.log(arr);
 
 
   $(function() {
@@ -60,7 +59,7 @@ console.log(arr);
 		    	<a href="#">Resources</a>
 		    	<ul class="fallback">
 		    		<li><a href="#" id="create-resource">Create Resource</a></li>
-		    		<li><a href="#" id="show-all-resources">Show All Resources</a></li>
+		    		<li><a href="#" class="show-all-resources">Show All Resources</a></li>
 		    		<li><a href="#" id="add-resource-type">Create Resource Type</a></li>
 		    		<li><a href="#" id="add-resource-title">Create Resource Title</a></li>
 		    		<li><a href="#">Resource Numbers</a></li>

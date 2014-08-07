@@ -23,7 +23,7 @@ class Project_model extends CI_Model {
 
 	function get_all_project_types()
 	{
-		$query = $this->db->query("SELECT * FROM sch_project_type");
+		$query = $this->db->query("SELECT * FROM sch_project_type ORDER BY TYPE_NAME");
 
 		return $query->result();
 	}
@@ -37,14 +37,21 @@ class Project_model extends CI_Model {
 
 	function get_all_departments()
 	{
-		$query = $this->db->query("SELECT * FROM sch_project_dept");
+		$query = $this->db->query("SELECT * FROM sch_project_dept ORDER BY DEPT_NAME");
 
 		return $query->result();
 	}
 
 	function get_all_project_codes()
 	{
-		$query = $this->db->query("SELECT PROJECT_CODE FROM sch_project");
+		$query = $this->db->query("SELECT project_code FROM sch_project ORDER BY project_code");
+
+		return $query->result();
+	}
+
+	function get_all_systems()
+	{
+		$query = $this->db->query("SELECT * FROM sch_skill WHERE skill_category_id = (SELECT skill_category_id FROM sch_skill_category WHERE category_name = 'Systems') ORDER BY skill_name");
 
 		return $query->result();
 	}
@@ -86,6 +93,21 @@ class Project_model extends CI_Model {
 		}
 	}
 
+	function insert_project_skill($project_id, $sys_id)
+	{
+		$this->db->set('PROJECT_ID', $project_id);
+		$this->db->set('SKILL_ID', $sys_id);
+
+		if($this->db->insert('SCH_PROJECT_SKILL') != TRUE)
+		{
+			return 'error';
+		}
+		else
+		{
+			return 'added';
+		}
+	}
+
 	function check_if_project_type_exists($project_type)
 	{
 		$query = $this->db->query("SELECT * FROM sch_project_type WHERE type_name = '$project_type'");
@@ -93,7 +115,7 @@ class Project_model extends CI_Model {
 		return $query->num_rows();
 	}
 
-	function insert_project_type($project_type)
+	function insert_project_type($project_type, $project_abbr)
 	{
 		$query = $this->check_if_project_type_exists($project_type);
 
@@ -104,6 +126,7 @@ class Project_model extends CI_Model {
 		else
 		{
 			$this->db->set('TYPE_NAME', $project_type);
+			$this->db->set('ABBR', $project_abbr);
 			
 			if($this->db->insert('SCH_PROJECT_TYPE') != TRUE)
 			{
@@ -126,7 +149,7 @@ class Project_model extends CI_Model {
 		return $query->num_rows();		
 	}
 
-	function insert_department($dept_name)
+	function insert_department($dept_name, $dept_abbr)
 	{
 		$query = $this->check_if_dept_exists($dept_name);
 
@@ -137,6 +160,7 @@ class Project_model extends CI_Model {
 		else
 		{
 			$this->db->set('DEPT_NAME', $dept_name);
+			$this->db->set('ABBR', $dept_abbr);
 			
 			if($this->db->insert('SCH_PROJECT_DEPT') != TRUE)
 			{

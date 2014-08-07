@@ -15,7 +15,20 @@
 		'id' => 'project-type-name',
 		'placeholder' => 'Project Type Name'
 		);
+	echo form_label('Project Type Name: ', 'project_type_name');
 	echo form_input($data);
+
+	echo '</br>';
+
+	$data = array(
+		'name' => 'project_abbr',
+		'id' => 'project-abbr',
+		'placeholder' => 'Project Abbreviation'
+		);
+	echo form_label('Project Abbreviation: ', 'project_abbr');
+	echo form_input($data);
+
+	echo '</br>';
 
 	$data = array(
 		'name' => 'new_project_type_submit',

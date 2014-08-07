@@ -27,6 +27,7 @@ class Project extends CI_Controller {
 		$data['project_type'] = $this->Project_model->get_all_project_types();
 		$data['department'] = $this->Project_model->get_all_departments();
 		$data['resource_type'] = $this->Resource_model->get_all_resource_types();
+		$data['system'] = $this->Project_model->get_all_systems();
 
 		$this->load->view('project/new_project',  $data);
 	}
@@ -43,6 +44,7 @@ class Project extends CI_Controller {
 		$this->form_validation->set_rules('project_descriptor', 'Project Descriptor', 'required');
 		$this->form_validation->set_rules('project_code', 'Project Code', 'required');
 		$this->form_validation->set_rules('project_info', 'Project Info', 'required');
+		$this->form_validation->set_rules('system', 'System', 'required');
 
 		$resource_type = $this->Resource_model->get_all_resource_types();
 
@@ -69,6 +71,7 @@ class Project extends CI_Controller {
 			$project_descriptor = $this->security->xss_clean($this->input->post('project_descriptor'));
 			$project_code = $this->security->xss_clean($this->input->post('project_code'));
 			$project_info = $this->security->xss_clean($this->input->post('project_info'));
+			$system = $this->security->xss_clean($this->input->post('system'));
 
 			$query = $this->Project_model->insert_project($project_name, $project_dept_id, $project_year, $project_type_id, $project_sponsor, $sequence_number, $project_descriptor, $project_code, $project_info);
 
@@ -85,16 +88,29 @@ class Project extends CI_Controller {
 				}
 				else
 				{
-					foreach($resource_type as $type)
-					{
-						$duration = $this->security->xss_clean($this->input->post('duration_'.$type->RESOURCE_TYPE_ID));
-
-						$query = $this->Project_model->insert_project_duration($project_id, $type->RESOURCE_TYPE_ID, $duration);
+					foreach ($system as $sys_id) {
+						$query = $this->Project_model->insert_project_skill($project_id, $sys_id);
 
 						if($query == 'error')
 						{
 							$flag = 1;
-							echo json_encode(array('success'=>0, 'msg' => 'Error with adding project duration to the database'));
+							echo json_encode(array('success'=>0, 'msg' => 'Error with adding project skill to the database'));
+						}
+					}
+
+					foreach($resource_type as $type)
+					{
+						$duration = $this->security->xss_clean($this->input->post('duration_'.$type->RESOURCE_TYPE_ID));
+
+						if($duration > 0)
+						{
+							$query = $this->Project_model->insert_project_duration($project_id, $type->RESOURCE_TYPE_ID, $duration);
+
+							if($query == 'error')
+							{
+								$flag = 1;
+								echo json_encode(array('success'=>0, 'msg' => 'Error with adding project duration to the database'));
+							}
 						}
 					}
 					if($flag == 0)
@@ -126,6 +142,7 @@ class Project extends CI_Controller {
 	public function createProjectType()
 	{
 		$this->form_validation->set_rules('project_type_name', 'Project Type Name', 'required');
+		$this->form_validation->set_rules('project_abbr', 'Project Abbreviation', 'required');
 
 		if($this->form_validation->run() == FALSE)
 		{
@@ -135,9 +152,12 @@ class Project extends CI_Controller {
 		{
 			
 			$project_type = $this->input->post('project_type_name');
-			$project_type = ucfirst(strtolower($project_type));
+			$project_abbr = $this->input->post('project_abbr');
 			
-			$query = $this->Project_model->insert_project_type($project_type);
+			$project_type = ucfirst(strtolower($project_type));
+			$project_abbr = strtoupper($project_abbr);
+			
+			$query = $this->Project_model->insert_project_type($project_type, $project_abbr);
 			
 			if($query == 'exists')
 			{
@@ -164,6 +184,7 @@ class Project extends CI_Controller {
 	public function createDept()
 	{
 		$this->form_validation->set_rules('dept_name', 'Department Name', 'required');
+		$this->form_validation->set_rules('dept_abbr', 'Department Abbreviation', 'required');
 
 		if($this->form_validation->run() == FALSE)
 		{
@@ -173,9 +194,12 @@ class Project extends CI_Controller {
 		{
 			
 			$dept_name = $this->input->post('dept_name');
-			$dept_name = strtoupper($dept_name);
-			
-			$query = $this->Project_model->insert_department($dept_name);
+			$dept_abbr = $this->input->post('dept_abbr');
+
+			$dept_name = ucwords(strtolower($dept_name));
+			$dept_abbr = strtoupper($dept_abbr);
+
+			$query = $this->Project_model->insert_department($dept_name, $dept_abbr);
 			
 			if($query == 'exists')
 			{
@@ -238,5 +262,6 @@ class Project extends CI_Controller {
 	{
 		
 	}
+
 
 }

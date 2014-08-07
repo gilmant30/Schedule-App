@@ -24,54 +24,78 @@ class Phase extends CI_Controller {
 		$data['phase_types'] = $this->Phase_model->get_all_phase_types();
 		$data['resource_types'] = $this->Resource_model->get_all_resource_types();
 		$data['project'] = $this->Project_model->get_project_by_id($project_id);
+		$data['system'] = $this->Phase_model->get_systems_in_project($project_id);
+		$data['project_duration'] = $this->Phase_model->get_project_duration($project_id);
 
 		$this->load->view('phase/new_phase', $data);
 	}
 
-	public function createPhase($project_id)
+	public function createPhase()
 	{
-		$phase_types = $this->Phase_model->get_all_phase_types();
-
-		$insert_type = $this->input->post('insert_phase');
+		$phase_error = 0;
+		$resource_error = 0;
 		$project_id = $this->input->post('project_id');
-		$flag = 0;
-		$added = 0;
-	
-		foreach($insert_type as $type)
-		{
-			foreach ($phase_types as $phase_type) {
-				if($type == $phase_type->PHASE_TYPE_ID)
-				{
-					if($flag == 0)
-					{
-						$this->form_validation->set_rules('phase_start_'.$type, 'Phase Start '.$phase_type->TYPE_NAME, 'required');
-						$this->form_validation->set_rules('phase_end_'.$type, 'Phase End '.$phase_type->TYPE_NAME, 'required');
+		$phase_types = $this->Phase_model->get_all_phase_types();
+		$resource_types = $this->Resource_model->get_all_resource_types();
+		$system = $this->Phase_model->get_systems_in_project($project_id);
+		$project_year = $this->Phase_model->get_project_year($project_id);
 
-						if($this->form_validation->run() == FALSE)
-						{
-						  echo json_encode(array('success'=>0, 'msg' => validation_errors()));
-						  $flag++;
-						}
+		foreach($phase_types as $phase_type)
+		{
+			foreach ($resource_types as $resource_type) {
+					foreach($system as $sys)
+					{
+						$this->form_validation->set_rules('duration_'.$phase_type->PHASE_TYPE_ID.'_'.$sys->SKILL_ID.'_'.$resource_type->RESOURCE_TYPE_ID, $phase_type->TYPE_NAME.' for '.$resource_type->TYPE_NAME.' '.$sys->SKILL_NAME.' hrs','required|numeric');
 					}
-				}
-			}
+			}		
 		}
 
-		
-		if($flag == 0)
+		if($this->form_validation->run() == FALSE)
 		{
-			foreach ($insert_type as $type) 
+		  echo json_encode(array('success'=>0, 'msg' => validation_errors()));
+		}
+		else
+		{
+			foreach($phase_types as $phase_type)
 			{
-				$start = $this->input->post('phase_start_'.$type);
-				$end = $this->input->post('phase_end_'.$type);
+				$phase_id = $this->Phase_model->insert_phase($project_id, $phase_type->PHASE_TYPE_ID, $project_year);
 
-				$query = $this->Phase_model->insert_phase($project_id, $type, $start, $end);
+				if($phase_id == 'error')
+				{
+					$phase_error++;
+				}
+				else
+				{
+					foreach ($resource_types as $resource_type) {
+						foreach($system as $sys)
+						{
+							$duration = $this->security->xss_clean($this->input->post('duration_'.$phase_type->PHASE_TYPE_ID.'_'.$sys->SKILL_ID.'_'.$resource_type->RESOURCE_TYPE_ID));
+							
+							$query = $this->Phase_model->insert_needed_resource_type($duration, $phase_id, $sys->SKILL_ID, $resource_type->RESOURCE_TYPE_ID);
 
-				if($query == 'added')
-					$added++;
+							if($query = 'error')
+							{
+								$resource_error++;
+							}
+						}
+					}	
+				}	
 			}
-			echo json_encode(array('success'=>1, 'msg' => $added.' Phase added'));
-		}		
+
+			if($phase_error == 0 && $resource_error == 0)
+			{
+				echo json_encode(array('success'=>1, 'msg' => 'Phases succesfully added'));
+			}
+			elseif($resource_error > 0)
+			{
+				echo json_encode(array('success'=>0, 'msg' => 'Error inserting resources'));
+			}
+			elseif($phase_error > 0)
+			{
+				echo json_encode(array('success'=>0, 'msg' => 'Error inserting phases'))
+;			}
+		}	
+
 	}
 
 	public function newPhaseType()

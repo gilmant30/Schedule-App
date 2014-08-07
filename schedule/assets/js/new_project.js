@@ -3,6 +3,7 @@ var base_url = 'http://localhost/schedule/';
 $( document ).ready(function() {
 
 /************** New Project ************************/
+	$('#system').multiSelect();
 
 	$("#create-project").click(function(event) {
 		event.preventDefault();
@@ -40,9 +41,9 @@ $( document ).ready(function() {
 /****************** New Project Form *************/
 
 	var year = $("#project-year").val();
-	var type = $("#project-type option:selected").text();
+	var type = $("#project-type option:selected").attr("id");
 	var seq_num = $("#sequence-number").val();
-	var dept = $("#project-dept option:selected").text();
+	var dept = $("#project-dept option:selected").attr("id");
 	var descriptor = $("#project-descriptor").val();
 	$("#project-code").val(year + "-" + type + "-" + seq_num + "-" + dept + "-" + descriptor);
 
@@ -52,18 +53,19 @@ $( document ).ready(function() {
 	});
 
 	$("#project-type").bind( "change", function() {
-		type = $("#project-type option:selected").text();
+		type = $("#project-type option:selected").attr("id");
 		$("#project-code").val(year + "-" + type + "-" + seq_num + "-" + dept + "-"  + descriptor);
 	});
 
 
 	$("#project-year").bind( "keyup keypress blur", function() {
 		year = $(this).val();
+		year = year.slice(2);
 		$("#project-code").val(year + "-" + type + "-" + seq_num + "-" + dept + "-"  + descriptor);
 	});
 
 	$("#project-dept").bind( "change", function() {
-		dept = $("#project-dept option:selected").text();
+		dept = $("#project-dept option:selected").attr("id");
 		$("#project-code").val(year + "-" + type + "-" + seq_num + "-" + dept + "-" + descriptor);
 	});
 

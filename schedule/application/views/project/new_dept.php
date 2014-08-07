@@ -15,7 +15,20 @@
 		'id' => 'dept-name',
 		'placeholder' => 'Department Name'
 		);
+	echo form_label('Department Name: ', 'dept_name');
 	echo form_input($data);
+
+	echo '</br>';
+
+	$data = array(
+		'name' => 'dept_abbr',
+		'id' => 'dept-abbr',
+		'placeholder' => 'Department Abbreviation'
+		);
+	echo form_label('Department Abbreviation: ', 'dept_abbr');
+	echo form_input($data);
+
+	echo '</br>';
 
 	$data = array(
 		'name' => 'new_dept_submit',

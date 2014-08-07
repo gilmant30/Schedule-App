@@ -46,13 +46,39 @@ class Phase_model extends CI_Model {
 		return $query->result();
 	}
 
-	function insert_phase($project_id, $phase_type, $start, $end)
+	function get_phase_id($project_id,$phase_type_id,$status)
+	{
+		$query = $this->db->query("SELECT * FROM sch_project_phase WHERE phase_type_id = '$phase_type_id' AND project_id = '$project_id' AND status = '$status'");
+
+		$query = $query->row();
+
+		return $query->PROJECT_PHASE_ID;
+	}
+
+	function insert_needed_resource_type($duration, $phase_id, $sys_id, $resource_type_id)
+	{
+		$this->db->set('RESOURCE_TYPE_ID', $resource_type_id);
+		$this->db->set('PROJECT_PHASE_ID', $phase_id);
+		$this->db->set('SKILL_ID', $sys_id);
+		$this->db->set('PHASE_DURATION', $duration);
+
+		if($this->db->insert('SCH_NEEDED_RESOURCE_TYPE') != TRUE)
+		{
+			return 'error';
+		}
+		else
+		{
+			return 'added';
+		}
+
+	}
+
+	function insert_phase($project_id, $phase_type_id, $project_year)
 	{
 		$this->db->set('PROJECT_ID', $project_id);
-		$this->db->set('PHASE_TYPE_ID', $phase_type);
-		$this->db->set('PHASE_START', $start);
-		$this->db->set('PHASE_END', $end);
-		$this->db->set('STATUS', 'start');
+		$this->db->set('PHASE_TYPE_ID', $phase_type_id);
+		$this->db->set('PHASE_YEAR', $project_year);
+		$this->db->set('STATUS', 'initial');
 
 		if($this->db->insert('SCH_PROJECT_PHASE') != TRUE)
 		{
@@ -60,7 +86,9 @@ class Phase_model extends CI_Model {
 		}
 		else
 		{
-			return 'added';
+			$phase_id = $this->get_phase_id($project_id,$phase_type_id,'initial');
+			
+			return $phase_id;
 		}
 	}
 
@@ -69,5 +97,28 @@ class Phase_model extends CI_Model {
 		$query = $this->db->query("SELECT * FROM sch_project_phase WHERE project_phase_id = '$phase_id'");
 
 		return $query->row();
+	}
+
+	function get_systems_in_project($project_id)
+	{
+		$query = $this->db->query("SELECT skill_name, sch_skill.skill_id FROM sch_project_skill JOIN sch_skill ON sch_skill.skill_id = sch_project_skill.skill_id WHERE sch_project_skill.project_id = '$project_id'");
+
+		return $query->result();
+	}
+
+	function get_project_duration($project_id)
+	{
+		$query = $this->db->query("SELECT * FROM sch_project_duration WHERE project_id = '$project_id'");
+
+		return $query->result();
+	}
+
+	function get_project_year($project_id)
+	{
+		$query = $this->db->query("SELECT * FROM sch_project WHERE project_id = '$project_id'");
+
+		$query = $query->row();
+
+		return $query->PROJECT_YEAR;
 	}
 }

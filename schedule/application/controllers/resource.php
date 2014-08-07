@@ -9,6 +9,7 @@ class Resource extends CI_Controller {
 		$this->load->helper(array('form', 'url', 'string', 'cookie'));  //load a form and the base_url
         $this->load->library(array('form_validation', 'security', 'session')); //set form_validation rules and xss_cleaning
         $this->load->model('Resource_model');
+        $this->load->model('Project_model');
         
 	}
 
@@ -147,6 +148,73 @@ class Resource extends CI_Controller {
 		$data['resource_title'] = $this->Resource_model->get_all_titles();
 
 		$this->load->view('resource/resource_list',$data);
+	}
+
+	public function showResourceById($id,$year)
+	{
+		$current_year = date('Y');
+		$time = 0;
+		$data['resource_info'] = $this->Resource_model->get_resource_info($id);
+		$available_time = $this->Resource_model->get_availabel_time($id);
+		$phases	= $this->Resource_model->get_phases_by_year($year);
+
+		foreach($phases as $phase)
+		{
+			$time = $time + $this->Resource_model->get_time_for_resource($id, $phase->PROJECT_PHASE_ID);
+		}
+
+		$available_time = (int) $available_time;
+		$time = (int) $time;
+
+		$data['total_time'] = $available_time;
+		$data['time_spent'] = $time;
+		$data['available_time'] = $available_time - $time;
+		$data['year'] = $year;
+		if($current_year == $year)
+		{
+			$data['year2'] = $year + 1;
+			$data['year3'] = $year + 2;
+		}
+		else
+		{
+			if($current_year == $year - 1)
+			{
+				$data['year2'] = $year - 1;
+				$data['year3'] = $year + 1;
+			}
+			elseif($current_year == $year - 2)
+			{
+				$data['year2'] = $year - 2;
+				$data['year3'] = $year - 1;
+			}
+		}
+
+		$percentage = ($time/$available_time)*100;
+		$data['progress_bar'] = json_encode($percentage);
+
+		$this->load->view('resource/resource_by_id',$data);
+	}
+
+	public function AllocateResources()
+	{
+		$year = data('Y');
+
+		$years = array($year,$year+1,$year+2);
+
+		foreach($years as $year)
+		{
+			$projects = $this->Resource_model->get_all_projects_by_year($year);
+
+			foreach ($projects as $proj) {
+				$phases = $this->Project_model->get_project_phases($proj->PROJECT_ID);
+				foreach ($phases as $phase) {
+					$needed_resource_types = $this->Resource_model->get_needed_resource_type($phase->PROJECT_PHASE_ID);
+					foreach ($needed_resource_types as $needed_resource) {
+						$query = $this->Resource_model->allocate_resource($needed_resource->RESOURCE_TYPE_ID, $needed_resource->SKILL_ID, $needed_resource->PHASE_DURATION, $year);
+					}
+				}
+			}
+		}
 	}
 
 }

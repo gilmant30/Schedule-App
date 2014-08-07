@@ -42,7 +42,7 @@ $( document ).ready(function() {
 
 	/************** Show All Resources ************************/
 
-	$("#show-all-resources").click(function(event) {
+	$(".show-all-resources").click(function(event) {
 		event.preventDefault();
 		loadAllResources();
 	});
@@ -50,6 +50,14 @@ $( document ).ready(function() {
 	function loadAllResources(){
 		$(".left-container").load(base_url + 'resource/showAll');
 	}
+
+	$(".clickable").click(function() {
+		var id = $(this).text();
+		var year = new Date();
+		year = year.getFullYear();
+		//$(".left-container").html('This is the resource page for resource '+id);
+		$(".left-container").load(base_url + "resource/showResourceById/"+id+"/"+year);
+	});
 
 
 	/*****************************************************/
@@ -138,18 +146,6 @@ $( document ).ready(function() {
 
 	/*******************************************************/
 
-
-	/************** Show All Resource ************************/
-
-	$("#show-all-resource").click(function() {
-		showAllResources();
-	});
-
-	function showAllResources(){
-		$(".right-container").html('This is the show all resources page');
-	}
-
-	/*******************************************************/
 
 /****************************************************************************************/
 

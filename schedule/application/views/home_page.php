@@ -1,5 +1,6 @@
 <script type="text/javascript" src="<?= base_url();?>assets/js/jquery-latest.js" ></script>
 <script type="text/javascript" src="<?= base_url();?>assets/js/jquery-ui-1.10.4.custom.min.js" ></script>
+<script type="text/javascript" src="<?= base_url();?>assets/js/jquery.multi-select.js" ></script>
 <script type="text/javascript" src="<?= base_url();?>assets/js/new_project.js" ></script>
 
  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
@@ -40,8 +41,8 @@ $(function() {
   	<div class="display">
   		<h3>Select View</h3>
   		<ul>
-  			<li>By day</li>
-  			<li>By month</li>
+  			<li>By Resource</li>
+  			<li>By System</li>
   			<li><strong>By year</strong></li>
   		</ul>
   	</div>

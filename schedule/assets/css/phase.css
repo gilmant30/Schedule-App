@@ -1,13 +1,23 @@
 /***************************** New Phase Type ****************************************************/
 
 .new-phase{
+  position: relative;
   width: 100%;
   height: 100%;
 }
 
-#new-phase-type-form{
-  margin: 0 auto;
+#new-phase-form{
+	margin: 0;
+  	width: 75%;
+  	float: left;
 }
 
+
+#project-time{
+	left: 55%;
+	position: fixed;
+	margin-top: 30px;
+	max-height: 100%;
+}
 
 

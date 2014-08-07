@@ -11,27 +11,15 @@ $( document ).ready(function() {
 	   	loadNewPhaseForm();
 	});
 
-	/*
-	function loadAllProjectPage(){
-		var project_id = $("#top-view-info-project-id").text();
-		//check whether there is a valid project id available
-		if(project_id)
-		{
-			loadNewPhaseForm(project_id);
-		}
-		else
-		{
-			$(".right-container").load(base_url + 'phase/selectProject');
-		}	
-	}
-	*/
 
 	function loadNewPhaseForm(){
-		$(".left-container").load(base_url + 'phase/newPhase/1');
+		$(".left-container").load(base_url + 'phase/newPhase/101');
 	}
 
 	$("#new-phase-form").submit(function(event){
 		event.preventDefault();
+
+		
 
 		var form_data = $(this).serialize();
 

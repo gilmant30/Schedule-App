@@ -1,6 +1,7 @@
 <script type="text/javascript" src="<?=base_url()?>assets/js/new_project.js"></script>
 <style>@import url('<?=base_url()?>assets/css/new_project.css'); </style>
 <style>@import url('<?=base_url()?>assets/css/progress_tracker.css'); </style>
+<style>@import url('<?=base_url()?>assets/css/multi-select.css'); </style>
 
 <body>
 
@@ -11,7 +12,7 @@
     <li class="progtrckr-todo">Create Project</li><!--
  --><li class="progtrckr-todo">Create Phases</li><!--
  --><li class="progtrckr-todo">Allocate Resources</li><!--
- --><li class="progtrckr-todo">Select Dates</li><!--
+ --><li class="progtrckr-todo">Review</li><!--
  --><li class="progtrckr-todo">Finished!</li>
 </ol>
 </div>
@@ -34,7 +35,7 @@
 	echo '<select class="options" name="project_dept_id" id="project-dept">';
 	  foreach($department as $dept)
 	  {
-	    echo '<option value ="'.$dept->PROJECT_DEPT_ID.'">'.$dept->DEPT_NAME.'</option>';
+	    echo '<option value ="'.$dept->PROJECT_DEPT_ID.'" id="'.$dept->ABBR.'">'.$dept->DEPT_NAME.'</option>';
 	  }
 	echo '</select>';
 
@@ -53,7 +54,7 @@
 	echo '<select class="options" name="project_type_id" id="project-type">';
 	  foreach($project_type as $type)
 	  {
-	    echo '<option value ="'.$type->PROJECT_TYPE_ID.'">'.$type->TYPE_NAME.'</option>';
+	    echo '<option value ="'.$type->PROJECT_TYPE_ID.'" id="'.$type->ABBR.'">'.$type->TYPE_NAME.'</option>';
 	  }
 	echo '</select>';
 
@@ -107,6 +108,17 @@
 	echo '<br />';
 	}
 
+	echo '<br />';
+
+	echo form_label('Select all systems used in this project: ', 'system');
+	echo '<select name="system[]" id="system" multiple="multiple">';
+		foreach($system as $sys)
+		{
+			echo '<option value="'.$sys->SKILL_ID.'">'.$sys->SKILL_NAME.'</option>';
+		}
+	echo '</select>';
+
+	echo '<br />';
 
 	$data = array(
 		'name' => 'project_info',
@@ -115,6 +127,9 @@
 		);
 	echo form_label('Project Info: ', 'project_info');
 	echo form_textarea($data);
+
+
+
 	echo '<br />';
 	echo '<br />';
 
