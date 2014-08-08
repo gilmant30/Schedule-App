@@ -71,11 +71,14 @@ class Phase extends CI_Controller {
 						{
 							$duration = $this->security->xss_clean($this->input->post('duration_'.$phase_type->PHASE_TYPE_ID.'_'.$sys->SKILL_ID.'_'.$resource_type->RESOURCE_TYPE_ID));
 							
-							$query = $this->Phase_model->insert_needed_resource_type($duration, $phase_id, $sys->SKILL_ID, $resource_type->RESOURCE_TYPE_ID);
-
-							if($query = 'error')
+							if($duration > 0)
 							{
-								$resource_error++;
+								$query = $this->Phase_model->insert_needed_resource_type($duration, $phase_id, $sys->SKILL_ID, $resource_type->RESOURCE_TYPE_ID);
+
+								if($query = 'error')
+								{
+									$resource_error++;
+								}
 							}
 						}
 					}	

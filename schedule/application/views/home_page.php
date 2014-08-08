@@ -5,26 +5,15 @@
 
  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
 
-
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
 <style>@import url('<?=base_url()?>assets/css/home_page.css'); </style>
 
 <script type="text/javascript">
-$(function() {
-    $( "#dev-progress-bar" ).progressbar({
-      value: 37
-    });
-});
-
-$(function() {
-    $( "#ba-progress-bar" ).progressbar({
-      value: 65
-    });
-});
-
-$(function() {
-    $( "#ops-progress-bar" ).progressbar({
-      value: 15
-    });
+var base_url = 'http://localhost/schedule/';
+$(document).ready(function(){
+  $(".right-container").load(base_url + 'project/progressBar');
 });
 </script>
 
@@ -37,43 +26,7 @@ $(function() {
       <p>Whatever the home page wants to look like info can go here</p>
   </div>
 
-  <div class="right-container">
-  	<div class="display">
-  		<h3>Select View</h3>
-  		<ul>
-  			<li>By Resource</li>
-  			<li>By System</li>
-  			<li><strong>By year</strong></li>
-  		</ul>
-  	</div>
-  	<div class="dev">
-  		<p>Developers total hrs <p>
-  		<div id="dev-progress-bar"></div>
-  		<div>0%</div>
-  		<p class="button">Show developer hours</p>
-  	</div>
-
-    </br>
-
-  	<div class="ba">
-  		<p>Business Analyst total hrs <p>
-  		<div id="ba-progress-bar"></div>
-  		<div>0%</div>
-  		<p class="button">Show ba hours</p>
-  	</div>
-
-  	 </br>
-
-  	<div class="ops">
-  		<p>Ops total hrs <p>
-  		<div id="ops-progress-bar"></div>
-  		<div>0%</div>
-  		<p class="button">Show ops hours</p>
-  	</div>
-
-  </div>
-
-</div>  
+  <div class="right-container"></div>  
 
 
 </body>

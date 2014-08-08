@@ -260,7 +260,10 @@ class Project extends CI_Controller {
 
 	public function progressBar()
 	{
-		
+		$data['systems'] = $this->Project_model->get_all_systems();
+		$data['resource_types'] = $this->Resource_model->get_all_resource_types();
+		$data['years'] = array(date('Y'), date('Y', strtotime("+1 year")), date('Y', strtotime("+2 years")));
+		$this->load->view('template/progress_bars', $data);
 	}
 
 

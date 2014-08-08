@@ -146,6 +146,38 @@ $( document ).ready(function() {
 
 	/*******************************************************/
 
+	/************** Update Resource Priority ************************/
+
+	$("#new-resource-priority-form").submit(function(event){
+		event.preventDefault();
+
+		var form_data = $(this).serialize();
+
+		$.ajax({
+		  	url: base_url + 'resource/updatePriority',
+		  	type: "POST",
+		  	data: form_data,
+		  	dataType : 'json',
+		  	success:function(data){
+			  	if (data.success == 0) { //If fails
+	                $('#new-priority-error').html(data.msg); //Throw relevant error
+	            }
+	            else {
+	            	$("#new-priority-success").html(data.msg); //throws success message       
+	            }
+	        }
+		});
+	});
+
+	/*****************************************************/
+
+	
+
+
+	/************** Show All Resources ************************/
+
+
+	/*****************************************************/
 
 /****************************************************************************************/
 

@@ -150,6 +150,45 @@ class Resource extends CI_Controller {
 		$this->load->view('resource/resource_list',$data);
 	}
 
+	public function updatePriority()
+	{
+		$flag = 0;
+		$systems = $this->Project_model->get_all_systems();
+		foreach($systems as $system)
+		{
+			$this->form_validation->set_rules('priority_'.$system->SKILL_ID, $system->SKILL_NAME, 'required|integer|is_natural');
+		}
+		if($this->form_validation->run() == FALSE)
+		{
+		  echo json_encode(array('success'=>0, 'msg' => validation_errors()));
+		}
+		else
+		{
+			$resource_id = $this->security->xss_clean($this->input->post('resource_id'));
+			$year = $this->security->xss_clean($this->input->post('year'));
+			foreach($systems as $system)
+			{
+				$priority = $this->security->xss_clean($this->input->post('priority_'.$system->SKILL_ID));
+
+				$query = $this->Resource_model->update_priority($resource_id, $system->SKILL_ID, $priority);
+
+				if($query == 'error')
+				{
+					$flag++;
+				}
+			}
+
+			if($flag == 0)
+			{
+				echo json_encode(array('success'=>1, 'msg' => 'updated', 'resource_id' => $resource_id, 'year' => $year));
+			}
+			else
+			{
+				echo json_encode(array('success'=>0, 'msg' => 'Error updating priority', 'resource_id' => $resource_id, 'year' => $year));
+			}
+		}
+	}
+
 	public function showResourceById($id,$year)
 	{
 		$current_year = date('Y');
@@ -157,6 +196,10 @@ class Resource extends CI_Controller {
 		$data['resource_info'] = $this->Resource_model->get_resource_info($id);
 		$available_time = $this->Resource_model->get_availabel_time($id);
 		$phases	= $this->Resource_model->get_phases_by_year($year);
+		$data['resource_resp'] = $this->Resource_model->get_resource_resp($id);
+		$data['systems'] = $this->Project_model->get_all_systems();
+		$data['resource_id'] = $id;
+
 
 		foreach($phases as $phase)
 		{
@@ -195,26 +238,37 @@ class Resource extends CI_Controller {
 		$this->load->view('resource/resource_by_id',$data);
 	}
 
-	public function AllocateResources()
+	public function allocateResources()
 	{
-		$year = data('Y');
+		$year = date('Y');
 
-		$years = array($year,$year+1,$year+2);
+		//$years = array($year,$year+1,$year+2);
 
-		foreach($years as $year)
-		{
+		$this->Resource_model->delete_allocated_resources();
+
+		//foreach($years as $year)
+		//{
 			$projects = $this->Resource_model->get_all_projects_by_year($year);
-
+			
 			foreach ($projects as $proj) {
 				$phases = $this->Project_model->get_project_phases($proj->PROJECT_ID);
+				
 				foreach ($phases as $phase) {
 					$needed_resource_types = $this->Resource_model->get_needed_resource_type($phase->PROJECT_PHASE_ID);
 					foreach ($needed_resource_types as $needed_resource) {
-						$query = $this->Resource_model->allocate_resource($needed_resource->RESOURCE_TYPE_ID, $needed_resource->SKILL_ID, $needed_resource->PHASE_DURATION, $year);
+						$order = 1;
+						$flag = 0;
+						$query = $this->Resource_model->allocate_resource($needed_resource->RESOURCE_TYPE_ID, $needed_resource->SKILL_ID, $needed_resource->PHASE_DURATION, $year, $needed_resource->NEEDED_RESOURCE_TYPE_ID, $order, $flag);
 					}
 				}
 			}
-		}
+		//}
+
+	}
+
+	public function systemsByPriority()
+	{
+		echo 'This shows systems based on priority and resource type';
 	}
 
 }

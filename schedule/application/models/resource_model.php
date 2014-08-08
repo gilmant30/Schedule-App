@@ -123,6 +123,96 @@ class Resource_model extends CI_Model {
 		return $query->result();
 	}
 
+	function get_resource_resp($id)
+	{
+		$query = $this->db->query("SELECT * FROM sch_resource_resp WHERE resource_id = '$id'");
+
+		return $query->result();
+	}
+
+	function check_if_priority_exists($resource_id, $skill_id)
+	{
+		$query = $this->db->query("SELECT * FROM sch_resource_resp WHERE resource_id = '$resource_id' AND skill_id = '$skill_id'");
+
+		return $query->num_rows();
+	}
+
+	function delete_priority($resource_id, $skill_id)
+	{
+		$this->db->query("DELETE FROM sch_resource_resp WHERE resource_id = '$resource_id' AND skill_id = '$skill_id'");
+
+		$query = $this->check_if_priority_exists($resource_id, $skill_id);
+
+		return $query;
+	}
+
+	function insert_priority($resource_id, $skill_id, $priority)
+	{
+		$this->db->set('RESOURCE_ID', $resource_id);
+		$this->db->set('SKILL_ID', $skill_id);
+		$this->db->set('RESP', $priority);
+
+		if($this->db->insert('SCH_RESOURCE_RESP') != TRUE)
+		{
+			return 'error';
+		}
+		else
+		{
+			return 'added';
+		}
+	}
+
+	function check_if_priority_matches($resource_id, $skill_id, $priority)
+	{
+		$query = $this->db->query("SELECT * FROM sch_resource_resp WHERE resource_id = '$resource_id' AND skill_id = '$skill_id' AND resp = '$priority'");
+
+		return $query->num_rows();
+	}
+
+	function update_priority($resource_id, $skill_id, $priority)
+	{
+		if($priority == 0)
+		{
+			$query = $this->check_if_priority_exists($resource_id, $skill_id);
+
+			if($query != 0)
+			{
+				$delete = $this->delete_priority($resource_id, $skill_id);
+
+				if($delete != 0)
+				{
+					return 'error';
+				}
+			}
+		}
+		else
+		{
+			$query = $this->check_if_priority_exists($resource_id, $skill_id);
+
+			if($query == 0)
+			{
+				$query = $this->insert_priority($resource_id, $skill_id, $priority);
+
+				return $query;
+			}
+			else
+			{
+				$this->db->query("UPDATE sch_resource_resp SET RESP = '$priority' WHERE resource_id = '$resource_id' AND skill_id = '$skill_id'");
+
+				$query = $this->check_if_priority_matches($resource_id, $skill_id, $priority);
+
+				if($query == 1)
+				{
+					return 'updated';
+				}
+				else
+				{
+					return 'error';
+				}
+			}
+		}
+	}
+
 
 	function get_phases_by_year($year)
 	{
@@ -189,9 +279,14 @@ class Resource_model extends CI_Model {
 		return $time;
 	}
 
+	function delete_allocated_resources()
+	{
+		$query = $this->db->query("DELETE FROM sch_allocated_resource");
+	}
+
 	function get_all_projects_by_year($year)
 	{
-		$query = $this->db->query("SELECT * FROM sch_project WHERE project_year = '$year'");
+		$query = $this->db->query("SELECT * FROM sch_project_order INNER JOIN sch_project ON sch_project_order.project_id = sch_project.project_id WHERE project_year = '$year' ORDER BY project_ord");
 
 		return $query->result();
 	}
@@ -212,14 +307,51 @@ class Resource_model extends CI_Model {
 		return $query->result();
 	}
 
-	function allocate_resource($resource_type_id, $skill_id, $duration, $year)
+	function insert_allocated_resource($needed_resource_type_id, $resource_id, $time)
 	{
-		$order = 1;
-		$resources = $this->get_all_available_resources($resource_type_id, $skill_id, $order);
+		$this->db->set('NEEDED_RESOURCE_TYPE_ID', $needed_resource_type_id);
+		$this->db->set('RESOURCE_ID', $resource_id);
+		$this->db->set('ALLOCATED_DURATION', $time);
+		$this->db->set('STAGE', 'Planning');
 
-		foreach ($variable as $key => $value) {
-			# code...
+		if($this->db->insert('SCH_ALLOCATED_RESOURCE') != TRUE)
+		{
+			return 'error';
 		}
+		else
+		{
+			return 'added';
+		}
+	}
+
+	function allocate_resource($resource_type_id, $skill_id, $duration, $year, $needed_resource_type_id, $order, $flag)
+	{
+		$resources = $this->get_all_available_resources($resource_type_id, $skill_id, $order, $needed_resource_type_id);
+
+		$time = $duration/2;
+
+		$people = 2;
+
+		foreach ($resources as $resource) {
+			if($flag <= $people)
+			{
+				$query = $this->insert_allocated_resource($needed_resource_type_id, $resource->RESOURCE_ID, $time);
+				
+				if($query == 'error')
+				{
+					return $query;
+				}
+				$flag++;
+
+				$duration = $duration - $time;
+			}
+		}
+
+		if($flag < $people)
+		{
+			$this->allocate_resource($resource_type_id, $skill_id, $duration, $year, $needed_resource_type_id, $order, $flag);
+		}
+
 
 	}
 

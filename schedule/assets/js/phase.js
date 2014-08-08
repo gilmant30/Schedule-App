@@ -25,7 +25,7 @@ $( document ).ready(function() {
 	}
 
 	function loadNewPhaseForm(project_id){
-		$(".right-container").load(base_url + 'phase/newPhase/' + project_id);
+		$(".right-container").load(base_url + 'phase/newPhase/101');
 	}
 
 	$("#new-phase-form").submit(function(event){

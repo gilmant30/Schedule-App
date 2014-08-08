@@ -40,6 +40,60 @@ $(document).ready(function(){
 
 	echo '<a href="#" class="show-all-resources">Show All Resources</a>';
 
+
+	echo '<h3>Priority</h3>';
+
+	$attr = 'id="new-resource-priority-form"';
+	echo form_open('resource/index', $attr);
+
+	$hidden = array(
+		'resource_id' => $resource_id,
+		'year' => $year
+		);
+
+	echo form_hidden($hidden);
+
+	foreach ($systems as $system) {
+		$flag = 0;
+		foreach($resource_resp as $resp)
+		{
+			if($system->SKILL_ID == $resp->SKILL_ID)
+			{
+				$input = array(
+					'name' => 'priority_'.$system->SKILL_ID,
+					'id' => 'priority_'.$system->SKILL_ID,
+					'value' => $resp->RESP
+					);
+				echo form_label($system->SKILL_NAME.': ', 'priority_'.$system->SKILL_ID);
+				echo form_input($input);
+				$flag++;
+			}
+		}
+		if($flag == 0)
+		{
+			$input = array(
+				'name' => 'priority_'.$system->SKILL_ID,
+				'id' => 'priority_'.$system->SKILL_ID,
+				'value' => '0'
+				);
+			echo form_label($system->SKILL_NAME.': ', 'priority_'.$system->SKILL_ID);
+			echo form_input($input);
+		}
+		echo '</br>';
+	}
+
+	$data = array(
+		'name' => 'new_resource_priority_submit',
+		'id' => 'new-resource-priority-submit',
+		'value' => 'Update Resource Priority'
+		);
+	echo form_submit($data);
+
+	echo form_close();
+
+	echo '<div id="new-priority-error" style="color:red;"></div>'; 
+	echo '<div id="new-priority-success" style="color:green;"></div>'; 
+
 ?>
 
 

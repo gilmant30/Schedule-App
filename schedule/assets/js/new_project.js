@@ -3,7 +3,6 @@ var base_url = 'http://localhost/schedule/';
 $( document ).ready(function() {
 
 /************** New Project ************************/
-	$('#system').multiSelect();
 
 	$("#create-project").click(function(event) {
 		event.preventDefault();
