@@ -172,9 +172,32 @@ $( document ).ready(function() {
 	/*****************************************************/
 
 	
+	/************** System Priority ************************/
 
+	$("#systems-by-priority").click(function(event) {
+		event.preventDefault();
+		loadSystemsByPriority();
+	});
 
-	/************** Show All Resources ************************/
+	function loadSystemsByPriority(){
+		$(".left-container").load(base_url + "resource/systemsByPriority");
+	}
+
+	/*****************************************************/
+
+	/************** Chnage Year ************************/
+
+	$("#year-2").click(function() {
+		var year = $(this).text();
+		var id = $('input[name=resource_id]').val();
+		$(".left-container").load(base_url + "resource/showResourceById/"+id+"/"+year);
+	});
+
+	$("#year-3").click(function() {
+		var year = $(this).text();
+		var id = $('input[name=resource_id]').val();
+		$(".left-container").load(base_url + "resource/showResourceById/"+id+"/"+year);
+	});
 
 
 	/*****************************************************/

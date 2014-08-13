@@ -77,6 +77,31 @@ class Project_model extends CI_Model {
 		}
 	}
 
+	function add_project_order($project_id, $project_year)
+	{
+		$query = $this->db->query("SELECT MAX(sch_project_order.project_ord) AS NUM_ORDER FROM sch_project INNER JOIN sch_project_order ON sch_project.project_id = sch_project_order.project_id WHERE sch_project.project_year = '$project_year'");
+
+		$query = $query->row();
+
+		$query = $query->NUM_ORDER;
+
+		$order = intval($query);
+
+		$order++;
+
+		$this->db->set('PROJECT_ID', $project_id);
+		$this->db->set('PROJECT_ORD', $order);
+
+		if($this->db->insert('SCH_PROJECT_ORDER') != TRUE)
+		{
+			return 'error';
+		}
+		else
+		{
+			return 'added';
+		}		
+	}
+
 	function insert_project_duration($project_id, $resource_type_id, $duration)
 	{
 		$this->db->set('PROJECT_ID', $project_id);
@@ -216,5 +241,109 @@ class Project_model extends CI_Model {
 			return 'error';
 		}
 	}
+
+	function get_total_system_time_used_by_resource_type_and_year($skill_id, $resource_type_id, $year)
+	{
+		$query = $this->db->query("SELECT SUM(sch_allocated_resource.allocated_duration) AS ALLOCATED_SUM FROM sch_allocated_resource INNER JOIN sch_resource ON 
+			sch_allocated_resource.resource_id = sch_resource.resource_id INNER JOIN sch_needed_resource_type ON 
+			sch_needed_resource_type.NEEDED_RESOURCE_TYPE_ID = sch_allocated_resource.NEEDED_RESOURCE_TYPE_ID INNER JOIN sch_project_phase ON
+			 sch_needed_resource_type.project_phase_id = sch_project_phase.project_phase_id WHERE
+			  sch_resource.resource_type_id = '$resource_type_id' AND sch_project_phase.phase_year = '$year' AND sch_needed_resource_type.skill_id = '$skill_id'");
+
+		$query = $query->row();
+
+		return $query->ALLOCATED_SUM;
+	}
+
+	function get_system_by_name($skill_id)
+	{
+		$query = $this->db->query("SELECT * FROM sch_skill WHERE skill_id = '$skill_id'");
+
+		$query = $query->row();
+
+		return $query->SKILL_NAME;
+	}
+
+	function get_resource_type_by_name($resource_type_id)
+	{
+		$query = $this->db->query("SELECT * FROM sch_resource_type WHERE resource_type_id = '$resource_type_id'");
+
+		$query = $query->row();
+
+		return $query->TYPE_NAME;
+	}
+
+	function get_all_resource_by_resource_type($resource_type_id)
+	{
+		$query = $this->db->query("SELECT * FROM sch_resource WHERE resource_type_id = '$resource_type_id'");
+
+		return $query->result();
+	}
+
+	function check_resource_resp($resource_id, $skill_id)
+	{
+		$query = $this->db->query("SELECT * FROM sch_resource_resp WHERE resource_id = '$resource_id' AND skill_id = '$skill_id'");
+
+		return $query->num_rows();
+	}
+
+	function get_total_hrs_by_resource($resource_id)
+	{
+		$query = $this->db->query("SELECT * FROM sch_resource INNER JOIN sch_title ON sch_resource.title_id = sch_title.title_id WHERE sch_resource.resource_id = '$resource_id'");
+
+		$query = $query->row();
+
+		$time = $query->HR_WORK_WEEK;
+
+		$time = (int) $time;
+
+		return $time*52;
+	}
+
+	function get_total_time_by_system_and_resource_type($skill_id, $resource_type_id)
+	{
+		$resources = $this->get_all_resource_by_resource_type($resource_type_id);
+		$total_time = 0;
+
+		foreach($resources as $resource)
+		{
+			$query = $this->check_resource_resp($resource->RESOURCE_ID, $skill_id);
+
+			if($query > 0)
+			{
+				$total_time = $total_time + $this->get_total_hrs_by_resource($resource->RESOURCE_ID);
+			}
+		}
+
+		return $total_time;
+	}
+
+	function get_hrs_spent_by_resource($resource_id, $year)
+	{
+		$query = $this->db->query("SELECT SUM(allocated_duration) AS allocated_sum FROM sch_allocated_resource WHERE resource_id = '$resource_id' AND allocated_year = '$year'");
+
+		$query = $query->row();
+
+		return $query->ALLOCATED_SUM;
+	}
+
+	function time_spent_by_resource($resource_type_id, $skill_id, $year)
+	{
+		$resources = $this->get_all_resource_by_resource_type($resource_type_id);
+		$time_spent = 0;
+
+		foreach($resources as $resource)
+		{
+			$query = $this->check_resource_resp($resource->RESOURCE_ID, $skill_id);
+
+			if($query > 0)
+			{
+				$time_spent = $time_spent + $this->get_hrs_spent_by_resource($resource->RESOURCE_ID, $year);
+			}
+		}
+
+		return $time_spent;
+	}
+
 
 }

@@ -3,6 +3,11 @@
 <style>@import url('<?=base_url()?>assets/css/progress_tracker.css'); </style>
 <style>@import url('<?=base_url()?>assets/css/multi-select.css'); </style>
 
+<script type="text/javascript">
+
+
+</script>
+
 <body>
 
 <div class="new-project">
@@ -110,7 +115,7 @@
 
 	echo '<br />';
 
-	echo form_label('Select all systems used in this project: ', 'system');
+	echo form_label('Select all systems used in this project: ', 'system[]');
 	echo '<select name="system[]" id="system" multiple="multiple">';
 		foreach($system as $sys)
 		{

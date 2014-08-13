@@ -3,11 +3,10 @@
 <script type="text/javascript" src="<?= base_url();?>assets/js/jquery.multi-select.js" ></script>
 <script type="text/javascript" src="<?= base_url();?>assets/js/new_project.js" ></script>
 
- <link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
 
-  <link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
-  <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-  <script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.0/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
 <style>@import url('<?=base_url()?>assets/css/home_page.css'); </style>
 
 <script type="text/javascript">

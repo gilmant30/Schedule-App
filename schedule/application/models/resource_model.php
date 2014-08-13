@@ -214,13 +214,6 @@ class Resource_model extends CI_Model {
 	}
 
 
-	function get_phases_by_year($year)
-	{
-		$query = $this->db->query("SELECT * FROM sch_project_phase WHERE phase_year = '$year'");
-
-		return $query->result();
-	}
-
 	function get_resource_info($id)
 	{
 		$query = $this->db->query("SELECT * FROM sch_resource INNER JOIN sch_resource_type ON sch_resource.resource_type_id = sch_resource_type.resource_type_id WHERE sch_resource.resource_id = '$id'");
@@ -237,7 +230,7 @@ class Resource_model extends CI_Model {
 
 	function get_time_of_allocated_resource($id, $needed_resource_type_id)
 	{
-		$query = $this->db->query("SELECT * FROM sch_allocated_resource WHERE needed_resource_type_id = '$needed_resource_type_id' AND resource_id = '$id'");
+		$query = $this->db->query("SELECT SUM(allocated_duration) AS allocated_duration FROM sch_allocated_resource WHERE needed_resource_type_id = '$needed_resource_type_id' AND resource_id = '$id'");
 
 		if($query->num_rows() > 0)
 		{
@@ -248,21 +241,29 @@ class Resource_model extends CI_Model {
 			return 0;
 	}
 
-	function get_time_for_resource($id, $phase_id)
+	function get_phases_by_year($year)
 	{
-		$needed = $this->get_all_needed_resource_type_id_within_phase($id, $phase_id);
+		$query = $this->db->query("SELECT * FROM sch_project_phase WHERE phase_year = '$year'");
 
-		$total_time = 0;
-
-		foreach($needed as $need)
-		{
-			$total_time = $total_time + $this->get_time_of_allocated_resource($id, $need->NEEDED_RESOURCE_TYPE_ID);
-		}
-
-		return $total_time;
+		return $query->result();
 	}
 
-	function get_availabel_time($id)
+	function get_time_for_resource($id, $year)
+	{
+		$time = 0;
+		$phases = $this->get_phases_by_year($year);
+
+		foreach ($phases as $phase) {
+			$needed_resource = $this->get_all_needed_resource_type_id_within_phase($id, $phase->PROJECT_PHASE_ID);
+			foreach ($needed_resource as $needed) {
+				$time = $time + $this->get_time_of_allocated_resource($id, $needed->NEEDED_RESOURCE_TYPE_ID);
+			}
+		}
+
+		return $time;
+	}
+
+	function get_available_time($id)
 	{
 		$query = $this->get_resource_info($id);
 
@@ -307,12 +308,13 @@ class Resource_model extends CI_Model {
 		return $query->result();
 	}
 
-	function insert_allocated_resource($needed_resource_type_id, $resource_id, $time)
+	function insert_allocated_resource($needed_resource_type_id, $resource_id, $time, $year)
 	{
 		$this->db->set('NEEDED_RESOURCE_TYPE_ID', $needed_resource_type_id);
 		$this->db->set('RESOURCE_ID', $resource_id);
 		$this->db->set('ALLOCATED_DURATION', $time);
 		$this->db->set('STAGE', 'Planning');
+		$this->db->set('ALLOCATED_YEAR', $year);
 
 		if($this->db->insert('SCH_ALLOCATED_RESOURCE') != TRUE)
 		{
@@ -324,35 +326,51 @@ class Resource_model extends CI_Model {
 		}
 	}
 
-	function allocate_resource($resource_type_id, $skill_id, $duration, $year, $needed_resource_type_id, $order, $flag)
+	function allocate_resource($resource_type_id, $skill_id, $duration, $year, $needed_resource_type_id, $order, $time_per_resource)
 	{
 		$resources = $this->get_all_available_resources($resource_type_id, $skill_id, $order, $needed_resource_type_id);
 
-		$time = $duration/2;
-
-		$people = 2;
-
 		foreach ($resources as $resource) {
-			if($flag <= $people)
-			{
-				$query = $this->insert_allocated_resource($needed_resource_type_id, $resource->RESOURCE_ID, $time);
-				
-				if($query == 'error')
+				if($duration > 0)
 				{
-					return $query;
-				}
-				$flag++;
+					$query = $this->insert_allocated_resource($needed_resource_type_id, $resource->RESOURCE_ID, $time_per_resource, $year);
+					
+					if($query == 'error')
+					{
+						return $query;
+					}
 
-				$duration = $duration - $time;
-			}
+					$duration = $duration - $time_per_resource;
+				}	
 		}
 
-		if($flag < $people)
-		{
-			$this->allocate_resource($resource_type_id, $skill_id, $duration, $year, $needed_resource_type_id, $order, $flag);
-		}
+		return $duration;
 
+	}
 
+	function get_all_resources_by_type($resource_type_id)
+	{
+		$query = $this->db->query("SELECT * FROM sch_resource WHERE resource_type_id = '$resource_type_id'");
+
+		return $query->result();
+	}
+
+	function get_allocated_time_by_system($resource_id, $skill_id, $year)
+	{
+		$query = $this->db->query("SELECT SUM(sch_allocated_resource.allocated_duration) AS allocated_sum FROM sch_allocated_resource INNER JOIN sch_needed_resource_type ON
+		sch_allocated_resource.needed_resource_type_id = sch_needed_resource_type.needed_resource_type_id WHERE sch_allocated_resource.resource_id = '$resource_id' 
+		AND sch_needed_resource_type.skill_id = '$skill_id' AND sch_allocated_resource.allocated_year = '$year'");
+
+		$query = $query->row();
+
+		return $query->ALLOCATED_SUM;
+	}
+
+	function get_all_resource_resp()
+	{
+		$query = $this->db->query("SELECT * FROM sch_resource_resp");
+
+		return $query->result();
 	}
 
 }

@@ -17,7 +17,6 @@ $(document).ready(function()
 			<tr>
 				<th>Project Code</th>
 				<th>Name</th>
-				<th>Total Hours</th>
 				<th>Year</th>
 				<th>Department</th>
 				<th>Type</th>
@@ -34,7 +33,6 @@ $(document).ready(function()
 					echo '<tr>';
 						echo '<td class="clickable" id="'.$proj->PROJECT_ID.'" style="cursor:pointer;">'.$proj->PROJECT_CODE.'</td>';
 						echo '<td>'.$proj->PROJECT_NAME.'</td>';
-						echo '<td>'.$proj->PROJECT_DURATION.'</td>';
 						echo '<td>'.$proj->PROJECT_YEAR.'</td>';
 						foreach($department as $dept)
 						{

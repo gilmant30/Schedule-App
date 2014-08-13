@@ -194,17 +194,13 @@ class Resource extends CI_Controller {
 		$current_year = date('Y');
 		$time = 0;
 		$data['resource_info'] = $this->Resource_model->get_resource_info($id);
-		$available_time = $this->Resource_model->get_availabel_time($id);
-		$phases	= $this->Resource_model->get_phases_by_year($year);
+		$available_time = $this->Resource_model->get_available_time($id);
 		$data['resource_resp'] = $this->Resource_model->get_resource_resp($id);
 		$data['systems'] = $this->Project_model->get_all_systems();
 		$data['resource_id'] = $id;
 
 
-		foreach($phases as $phase)
-		{
-			$time = $time + $this->Resource_model->get_time_for_resource($id, $phase->PROJECT_PHASE_ID);
-		}
+		$time = $this->Resource_model->get_time_for_resource($id, $year);
 
 		$available_time = (int) $available_time;
 		$time = (int) $time;
@@ -233,7 +229,8 @@ class Resource extends CI_Controller {
 		}
 
 		$percentage = ($time/$available_time)*100;
-		$data['progress_bar'] = json_encode($percentage);
+		$percentage = number_format((float)$percentage, 0, '.', '');
+		$data['progress_bar'] = $percentage;
 
 		$this->load->view('resource/resource_by_id',$data);
 	}
@@ -241,13 +238,14 @@ class Resource extends CI_Controller {
 	public function allocateResources()
 	{
 		$year = date('Y');
-
-		//$years = array($year,$year+1,$year+2);
+		$error = 0;
+		$added = 0;
+		$years = array($year,$year+1,$year+2);
 
 		$this->Resource_model->delete_allocated_resources();
 
-		//foreach($years as $year)
-		//{
+		foreach($years as $year)
+		{
 			$projects = $this->Resource_model->get_all_projects_by_year($year);
 			
 			foreach ($projects as $proj) {
@@ -257,18 +255,33 @@ class Resource extends CI_Controller {
 					$needed_resource_types = $this->Resource_model->get_needed_resource_type($phase->PROJECT_PHASE_ID);
 					foreach ($needed_resource_types as $needed_resource) {
 						$order = 1;
-						$flag = 0;
-						$query = $this->Resource_model->allocate_resource($needed_resource->RESOURCE_TYPE_ID, $needed_resource->SKILL_ID, $needed_resource->PHASE_DURATION, $year, $needed_resource->NEEDED_RESOURCE_TYPE_ID, $order, $flag);
+						$duration = $needed_resource->PHASE_DURATION;
+						$time_per_resource = $needed_resource->PHASE_DURATION/2;
+						while($duration > 0)
+						{
+							$duration = $this->Resource_model->allocate_resource($needed_resource->RESOURCE_TYPE_ID, $needed_resource->SKILL_ID, $duration, $year, $needed_resource->NEEDED_RESOURCE_TYPE_ID, $order, $time_per_resource);
+						}
+						echo $duration.'</br>';
 					}
 				}
 			}
-		//}
+			//echo 'error is '.$error.'</br>';
+			//echo 'added is '.$added.'</br>';
+		}
 
 	}
 
 	public function systemsByPriority()
 	{
-		echo 'This shows systems based on priority and resource type';
+		$data['systems'] = $this->Project_model->get_all_systems();
+
+		$data['resources'] = $this->Resource_model->get_all_resources();
+
+		$data['resource_resps'] = $this->Resource_model->get_all_resource_resp();
+
+		$data['resource_types'] = $this->Resource_model->get_all_resource_types();
+
+		$this->load->view('resource/systems_by_priority', $data);
 	}
 
 }

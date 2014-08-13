@@ -13,7 +13,7 @@ $( document ).ready(function() {
 
 
 	function loadNewPhaseForm(){
-		$(".left-container").load(base_url + 'phase/newPhase/101');
+		$(".left-container").load(base_url + 'phase/newPhase/122');
 	}
 
 	$("#new-phase-form").submit(function(event){

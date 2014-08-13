@@ -88,6 +88,14 @@ class Project extends CI_Controller {
 				}
 				else
 				{
+					$query = $this->Project_model->add_project_order($project_id, $project_year);
+
+					if($query == 'error')
+					{
+						$flag = 1;
+						echo json_encode(array('success'=>0, 'msg' => 'Error with adding project order to the database'));
+					}
+
 					foreach ($system as $sys_id) {
 						$query = $this->Project_model->insert_project_skill($project_id, $sys_id);
 
@@ -154,7 +162,7 @@ class Project extends CI_Controller {
 			$project_type = $this->input->post('project_type_name');
 			$project_abbr = $this->input->post('project_abbr');
 			
-			$project_type = ucfirst(strtolower($project_type));
+			$project_type = ucwords(strtolower($project_type));
 			$project_abbr = strtoupper($project_abbr);
 			
 			$query = $this->Project_model->insert_project_type($project_type, $project_abbr);
@@ -264,6 +272,167 @@ class Project extends CI_Controller {
 		$data['resource_types'] = $this->Resource_model->get_all_resource_types();
 		$data['years'] = array(date('Y'), date('Y', strtotime("+1 year")), date('Y', strtotime("+2 years")));
 		$this->load->view('template/progress_bars', $data);
+	}
+
+	//display right side container with progress bars based on user interface
+	public function displayProgress($skill_id, $resource_type_id, $year)
+	{
+		//make the user select a system or resource type to show a view
+		if($skill_id == 0 && $resource_type_id == 0)
+		{
+			echo 'Select view by selecting a system and/or resource type above';
+		}
+		else
+		{
+			//get all phases for the certain year
+			$phases = $this->Resource_model->get_phases_by_year($year);	
+			
+			//if skill is none then show by resource type
+			if($skill_id == 0)
+			{
+				redirect('project/displayResourceTypes/'.$resource_type_id.'/'.$year);
+			}
+
+			//if resource type is none
+			elseif($resource_type_id == 0)
+			{
+				redirect('project/displaySystems/'.$skill_id.'/'.$year);
+			}
+
+			elseif($resource_type_id != 0 && $skill_id != 0)
+			{
+				redirect('project/displayResourceAndSystems/'.$skill_id.'/'.$resource_type_id.'/'.$year);
+			}
+		}
+		
+	}
+
+	public function displayResourceTypes($resource_type_id, $year)
+	{
+		$data['time_array'] = new ArrayObject();
+		$systems = $this->Project_model->get_all_systems();
+
+		foreach ($systems as $system) {
+			$allocated_time_for_system = $this->Project_model->get_total_system_time_used_by_resource_type_and_year($system->SKILL_ID, $resource_type_id, $year);
+
+			$total_time = $this->Project_model->get_total_time_by_system_and_resource_type($system->SKILL_ID, $resource_type_id);
+
+			$time_spent = $this->Project_model->time_spent_by_resource($resource_type_id, $system->SKILL_ID, $year);
+
+			$sys_name = $this->Project_model->get_system_by_name($system->SKILL_ID);
+
+			$resource_type_name = $this->Project_model->get_resource_type_by_name($resource_type_id);
+
+			$time_available = $total_time - $time_spent;
+
+			$percentage = ($allocated_time_for_system/($time_available))*100;
+
+			$percentage = number_format((float)$percentage, 0, '.', '');
+
+			$sys_arr = array(
+				'sys_name' => $sys_name,
+				'sys_id' => $system->SKILL_ID,
+				'type_name' => $resource_type_name,
+				'type_id' => $resource_type_id,
+				'time_available' => $time_available,
+				'allocated_time' => $allocated_time_for_system,
+				'percentage' => $percentage
+				);
+
+			$data['time_array']->append($sys_arr);
+			$data['resource_types'] = TRUE;
+			$data['sys_type'] = FALSE;
+			$data['resource'] = FALSE;
+			$data['type'] = $resource_type_name;
+		}
+
+		$this->load->view('project/display_progress', $data);
+	}
+
+	public function displaySystems($skill_id, $year)
+	{
+		$resource_types = $this->Resource_model->get_all_resource_types();
+		$data['time_array'] = new ArrayObject();
+
+		foreach($resource_types as $type)
+		{
+			$allocated_time_for_resource_type = $this->Project_model->get_total_system_time_used_by_resource_type_and_year($skill_id, $type->RESOURCE_TYPE_ID, $year);
+
+			$total_time = $this->Project_model->get_total_time_by_system_and_resource_type($skill_id, $type->RESOURCE_TYPE_ID);
+
+			$time_spent = $this->Project_model->time_spent_by_resource($type->RESOURCE_TYPE_ID, $skill_id, $year);
+
+			$sys_name = $this->Project_model->get_system_by_name($skill_id);
+
+			$type_name = $this->Project_model->get_resource_type_by_name($type->RESOURCE_TYPE_ID);
+
+			$resource_type_name = $this->Project_model->get_resource_type_by_name($type->RESOURCE_TYPE_ID);
+
+			$time_available = $total_time - $time_spent;
+
+			$percentage = ($allocated_time_for_resource_type/($time_available))*100;
+
+			$percentage = number_format((float)$percentage, 0, '.', '');
+
+			$sys_arr = array(
+				'sys_name' => $sys_name,
+				'sys_id' => $skill_id,
+				'type_name' => $resource_type_name,
+				'type_id' => $type->RESOURCE_TYPE_ID,
+				'time_available' => $time_available,
+				'allocated_time' => $allocated_time_for_resource_type,
+				'percentage' => $percentage
+				);
+
+			$data['time_array']->append($sys_arr);
+			$data['sys_type'] = TRUE;
+			$data['resource_types'] = FALSE;
+			$data['resource'] = FALSE;
+			$data['sys_name'] = $sys_name;
+		}
+
+		$this->load->view('project/display_progress', $data);
+	}
+
+	function displayResourceAndSystems($skill_id, $resource_type_id, $year)
+	{
+		$resources = $this->Resource_model->get_all_resources_by_type($resource_type_id);
+		$data['time_array'] = new ArrayObject();
+
+		foreach($resources as $resource)
+		{
+			$allocated_time_by_system = $this->Resource_model->get_allocated_time_by_system($resource->RESOURCE_ID, $skill_id, $year);
+
+			$total_time = $this->Resource_model->get_available_time($resource->RESOURCE_ID);
+
+			$time_spent = $this->Resource_model->get_time_for_resource($resource->RESOURCE_ID, $year);
+
+			$sys_name = $this->Project_model->get_system_by_name($skill_id);
+
+			$time_available = $total_time - $time_spent;
+
+			$percentage = ($allocated_time_by_system/($time_available))*100;
+
+			$percentage = number_format((float)$percentage, 0, '.', '');
+
+			$sys_arr = array(
+				'sys_name' => $sys_name,
+				'sys_id' => $skill_id,
+				'resource_name' => $resource->RESOURCE_NAME,
+				'type_id' => $resource->RESOURCE_ID,
+				'time_available' => $time_available,
+				'allocated_time' => $allocated_time_by_system,
+				'percentage' => $percentage
+				);
+
+			$data['time_array']->append($sys_arr);
+			$data['sys_type'] = FALSE;
+			$data['resource_types'] = FALSE;
+			$data['resource'] = TRUE;
+			$data['sys_name'] = $sys_name;
+		}
+
+		$this->load->view('project/display_progress', $data);
 	}
 
 

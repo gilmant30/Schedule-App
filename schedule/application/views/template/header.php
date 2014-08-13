@@ -70,6 +70,7 @@ projects.forEach(function(entry){
 		      <a href="#">Testing Only</a>
 		      <ul class="fallback">
 		        <li><a href="#" id="create-phase">Create Phase</a></li>
+		        <li><a href="#" id="system-preferences">System Preferences</a></li>
 		        <li><a href="#">Allocate Resource</a></li>
 		      </ul>
 		    </li>
